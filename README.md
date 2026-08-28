@@ -69,6 +69,22 @@ draft: false
 
 侧边栏会自动读取三个主题目录中的内容。新增其他顶级主题时，同时在 `src/config/site.ts` 的 `topics` 中补充标题、目录和一个真实存在的代表性笔记链接。
 
+## 站内写作后台
+
+生产环境后台位于 `/admin/`。后台使用 Decap CMS 编辑三个现有主题目录，图片保存到 `public/images/notes/`，保存后直接提交到 GitHub `main` 分支并触发 Cloudflare Pages 自动部署。
+
+首次启用时，在 GitHub Developer Settings 创建 OAuth App：
+
+- Homepage URL：`https://rainydays.cn/admin/`
+- Authorization callback URL：`https://rainydays.cn/api/callback`
+
+然后在 Cloudflare Pages 项目的 Settings -> Variables and Secrets 中添加两个加密变量，并重新部署：
+
+- `GITHUB_CLIENT_ID`
+- `GITHUB_CLIENT_SECRET`
+
+OAuth Function 只申请公开仓库写入权限，并在回调阶段校验 GitHub 登录名必须为 `CKlenrn`。密钥只存在于 Cloudflare 服务端环境变量中，不得写入仓库或前端配置。
+
 ## 搜索和主题
 
 全文搜索由 Starlight 的 Pagefind 提供，只能在 `pnpm build` 后的生产预览中完整验证。浅色和深色主题由 Starlight 原生切换器管理。

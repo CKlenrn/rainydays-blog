@@ -11,7 +11,8 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "check": "astro check"
+    "check": "astro check",
+    "test:oauth": "node --test tests/oauth-function.test.mjs"
   },
   "dependencies": {
     "@astrojs/starlight": "0.41.9",
@@ -22,4 +23,3 @@
     "typescript": "5.9.3"
   }
 }
-
