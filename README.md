@@ -71,19 +71,17 @@ draft: false
 
 ## 站内写作后台
 
-生产环境后台位于 `/admin/`。后台使用 Decap CMS 编辑三个现有主题目录，图片保存到 `public/images/notes/`，保存后直接提交到 GitHub `main` 分支并触发 Cloudflare Pages 自动部署。
+生产环境后台位于 `/admin/`。后台使用独立密码登录，编辑三个现有主题目录，图片保存到 `public/images/notes/`，保存后由 Cloudflare Pages Function 提交到 GitHub `main` 分支并触发自动部署。
 
-首次启用时，在 GitHub Developer Settings 创建 OAuth App：
+在 Cloudflare Pages 项目的 Settings -> Variables and Secrets 中添加三个加密变量，并重新部署：
 
-- Homepage URL：`https://rainydays.cn/admin/`
-- Authorization callback URL：`https://rainydays.cn/api/callback`
+- `ADMIN_PASSWORD`：后台登录密码，建议使用密码管理器生成至少 20 位随机值。
+- `SESSION_SECRET`：用于签名登录 Cookie 的独立随机值，建议至少 32 位。
+- `GITHUB_TOKEN`：GitHub Fine-grained personal access token，只授予 `rainydays-blog` 仓库的 Contents `Read and write` 权限。
 
-然后在 Cloudflare Pages 项目的 Settings -> Variables and Secrets 中添加两个加密变量，并重新部署：
+后台密码和 GitHub Token 只存在于 Cloudflare 服务端环境变量中，不得写入仓库、前端配置或截图。登录会话使用 HttpOnly、Secure、SameSite Cookie，有效期 12 小时。
 
-- `GITHUB_CLIENT_ID`
-- `GITHUB_CLIENT_SECRET`
-
-OAuth Function 只申请公开仓库写入权限，并在回调阶段校验 GitHub 登录名必须为 `CKlenrn`。密钥只存在于 Cloudflare 服务端环境变量中，不得写入仓库或前端配置。
+本地调试 Pages Function 时，将三个变量写入被 Git 忽略的 `.dev.vars`，格式参考 `.env.example`。
 
 ## 搜索和主题
 

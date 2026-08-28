@@ -12,7 +12,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
-    "test:oauth": "node --test tests/oauth-function.test.mjs"
+    "test:admin": "node --test tests/admin-function.test.mjs"
   },
   "dependencies": {
     "@astrojs/starlight": "0.41.9",
