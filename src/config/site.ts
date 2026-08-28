@@ -31,12 +31,12 @@ export const siteConfig: SiteConfig = {
   title: "Rainy Days",
   description: "记录学习方法、工具实践与阶段复盘的个人知识库。",
   author: {
-    name: "你的名字",
+    name: "ChenKun",
     bio: "在这里整理真正学会的知识，也记录下一次行动。",
     motto: "持续输入，主动实践，定期复盘。",
     avatar: {
-      src: "/images/avatar-placeholder.svg",
-      alt: "个人头像占位图",
+      src: "/images/chenkun-avatar.jpg",
+      alt: "ChenKun 的头像",
     },
   },
   links: [],
