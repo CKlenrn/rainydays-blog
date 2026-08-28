@@ -1,0 +1,99 @@
+---
+import { siteConfig } from "../../config/site";
+import { getRecentNotes } from "../../lib/notes";
+
+const recentNotes = await getRecentNotes();
+const socialLinks = siteConfig.links.filter((link) => link.href.trim());
+const fallbackInitial = siteConfig.author.name.trim().slice(0, 1) || "我";
+const dateFormatter = new Intl.DateTimeFormat("zh-CN", {
+  year: "numeric",
+  month: "short",
+  day: "numeric",
+});
+---
+
+<div class="home-landing">
+  <section class="home-intro" aria-labelledby="_top">
+    <div class="home-intro-copy">
+      <p class="home-eyebrow">Personal Learning Notes</p>
+      <p class="home-author">{siteConfig.author.name}</p>
+      <p class="home-motto">{siteConfig.author.motto}</p>
+      <p class="home-bio">{siteConfig.author.bio}</p>
+
+      <nav class="home-actions" aria-label="主要入口">
+        <a class="home-button home-button-primary" href={siteConfig.paths.notes}>进入知识库</a>
+        <a class="home-button home-button-secondary" href={siteConfig.paths.about}>关于我</a>
+      </nav>
+
+      {socialLinks.length > 0 && (
+        <nav class="home-social" aria-label="社交链接">
+          {socialLinks.map((link) => (
+            <a href={link.href} target={link.kind === "email" ? undefined : "_blank"} rel="noreferrer">
+              {link.label}
+            </a>
+          ))}
+        </nav>
+      )}
+    </div>
+
+    <div class="home-avatar" aria-label={siteConfig.author.avatar?.alt ?? `${siteConfig.author.name} 的头像占位`} role="img">
+      {siteConfig.author.avatar ? (
+        <img
+          src={siteConfig.author.avatar.src}
+          alt=""
+          width="128"
+          height="128"
+          loading="eager"
+          decoding="async"
+        />
+      ) : (
+        <span aria-hidden="true">{fallbackInitial}</span>
+      )}
+    </div>
+  </section>
+
+  <section class="home-section" aria-labelledby="topics-title">
+    <header class="home-section-heading">
+      <p class="home-eyebrow">Learning Map</p>
+      <h2 id="topics-title">当前学习主题</h2>
+    </header>
+    <div class="home-card-grid">
+      {siteConfig.topics.map((topic) => (
+        <a class="home-card topic-card" href={topic.href}>
+          <h3>{topic.title}</h3>
+          <p>{topic.description}</p>
+          <span>打开笔记</span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="home-section" aria-labelledby="recent-title">
+    <header class="home-section-heading home-section-heading-row">
+      <div>
+        <p class="home-eyebrow">Recent Updates</p>
+        <h2 id="recent-title">最近更新</h2>
+      </div>
+      <a class="home-text-link" href={siteConfig.paths.notes}>查看全部笔记</a>
+    </header>
+
+    {recentNotes.length > 0 ? (
+      <div class="home-card-grid recent-grid">
+        {recentNotes.map((note) => (
+          <article class="home-card note-card">
+            {note.date && <time datetime={note.date.toISOString()}>{dateFormatter.format(note.date)}</time>}
+            <h3><a href={note.href}>{note.title}</a></h3>
+            {note.description && <p>{note.description}</p>}
+            {note.tags.length > 0 && (
+              <ul class="note-tags" aria-label="标签">
+                {note.tags.map((tag) => <li>{tag}</li>)}
+              </ul>
+            )}
+          </article>
+        ))}
+      </div>
+    ) : (
+      <p class="home-empty">笔记正在整理中。</p>
+    )}
+  </section>
+</div>

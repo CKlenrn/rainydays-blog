@@ -1,0 +1,17 @@
+---
+title: 学习笔记
+description: 按学习方法、工具实践和阶段复盘整理的知识库。
+tableOfContents: false
+---
+
+import { siteConfig } from "../../../config/site";
+
+这里保存已经过练习或复盘的内容。笔记按主题归档，方便从问题进入，而不是从时间线翻找。
+
+## 主题
+
+<ul>
+  {siteConfig.topics.map((topic) => (
+    <li><a href={topic.href}>{topic.title}</a>：{topic.description}</li>
+  ))}
+</ul>

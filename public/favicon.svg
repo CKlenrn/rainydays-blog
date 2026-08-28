@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Rainy Days 图标">
+  <rect width="64" height="64" rx="12" fill="#197454"/>
+  <path d="M14 15h15c6 0 9 3 9 9v25c-2-3-5-4-9-4H14V15Z" fill="#fff"/>
+  <path d="M50 15H35c-6 0-9 3-9 9v25c2-3 5-4 9-4h15V15Z" fill="#dcefe7"/>
+  <path d="M42 15v15l4-3 4 3V15h-8Z" fill="#c95d45"/>
+</svg>

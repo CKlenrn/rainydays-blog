@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="个人头像占位图">
+  <rect width="128" height="128" fill="#dcefe7"/>
+  <circle cx="64" cy="47" r="24" fill="#197454"/>
+  <path d="M24 116c4-28 19-42 40-42s36 14 40 42H24Z" fill="#114a39"/>
+  <path d="M91 21h19v30l-9-6-10 6V21Z" fill="#c95d45"/>
+</svg>
+

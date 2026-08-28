@@ -1,0 +1,18 @@
+---
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+import type { StarlightPageProps } from "@astrojs/starlight/props";
+import HomeLanding from "../components/home/HomeLanding.astro";
+import { siteConfig } from "../config/site";
+
+const frontmatter = {
+  title: siteConfig.title,
+  description: siteConfig.description,
+  template: "splash",
+  tableOfContents: false,
+  head: [{ tag: "title", content: siteConfig.title }],
+} satisfies StarlightPageProps["frontmatter"];
+---
+
+<StarlightPage frontmatter={frontmatter}>
+  <HomeLanding />
+</StarlightPage>
