@@ -1,0 +1,1011 @@
+---
+import dashboardPayload from "../../data/paperlab-dashboard.json";
+
+interface DataStatus {
+  status: string;
+  label: string;
+  isLive?: boolean;
+  source?: string;
+  sourceSummary?: string;
+  freshSymbolCount?: number;
+  symbolCount?: number;
+  excludedSymbols?: string[];
+  notes?: string;
+  warnings?: string[];
+}
+
+interface Position {
+  symbol: string;
+  name?: string;
+  quantity: number;
+  averageCost?: number | null;
+  lastPrice?: number | null;
+  marketValue?: number | null;
+  unrealizedPnl?: number | null;
+  weight?: number | null;
+}
+
+interface PendingOrder {
+  symbol: string;
+  name?: string;
+  side: string;
+  quantity: number;
+  referencePrice?: number | null;
+  targetWeight?: number | null;
+  status: string;
+  executeOn?: string | null;
+}
+
+interface Fill {
+  time?: string | null;
+  symbol: string;
+  name?: string;
+  side: string;
+  quantity: number;
+  price: number;
+  amount?: number | null;
+  fee?: number | null;
+}
+
+interface EquityPoint {
+  date: string;
+  equity: number;
+}
+
+interface EntryPlan {
+  status: string;
+  candidate?: {
+    symbol: string;
+    name?: string;
+    quantity: number;
+    maximumLimitPrice: number;
+    maximumNotional: number;
+    settlement?: string;
+  };
+  executionWindow?: {
+    observeFrom: string;
+    entryFrom: string;
+    expiresAt: string;
+  };
+  entryGate?: {
+    triggerFormula: string;
+    minimumHoldSeconds: number;
+    aboveVwap: boolean;
+    minimumTurnover: number;
+    maximumIopvPremium: number;
+    benchmark: string;
+    benchmarkMinimumChange: number;
+  };
+  exitPolicy?: {
+    riskExit: string;
+    takeProfit: string;
+    timeExit: string;
+    sameDayExitAllowed: boolean;
+  };
+  dataQuality?: {
+    executionReady: boolean;
+    reason: string;
+  };
+  decision?: {
+    orderCreated: boolean;
+    fillRecorded: boolean;
+  };
+}
+
+interface Account {
+  id: string;
+  label: string;
+  capital: number;
+  cash: number;
+  equity: number;
+  marketValue: number;
+  totalReturn: number;
+  drawdown: number;
+  positionCount: number;
+  pendingOrderCount: number;
+  fillCount: number;
+  halted: boolean;
+  lastMarkDate: string | null;
+  positions: Position[];
+  pendingOrders: PendingOrder[];
+  recentFills: Fill[];
+  equityCurve: EquityPoint[];
+  entryPlan?: EntryPlan;
+}
+
+interface ValidationMetrics {
+  label?: string;
+  period?: string | { start: string; end: string };
+  equityCurve?: EquityPoint[];
+  totalReturn: number;
+  maxDrawdown: number;
+  sharpe: number;
+  profitFactor: number;
+  winRate: number;
+  tradeCount: number;
+  fillCount?: number;
+  foldCount?: number;
+  halted: boolean;
+  haltDate?: string | null;
+  validatedThrough?: string | null;
+}
+
+interface Strategy {
+  version: string;
+  deploymentStatus: string;
+  regime: string;
+  volatilityRegime: string;
+  signalDate: string;
+  targets: Array<{
+    symbol: string;
+    name?: string;
+    weight: number;
+    score?: number | null;
+  }>;
+  parameters: Record<string, string | number | boolean | number[]>;
+  liveGatePassed: boolean;
+  backtest: ValidationMetrics;
+  walkForward: ValidationMetrics;
+  failedGates: string[];
+}
+
+interface DashboardPayload {
+  schemaVersion: number;
+  generatedAt: string;
+  marketDate: string;
+  disclaimer: string;
+  dataStatus: DataStatus;
+  accounts: Account[];
+  strategy: Strategy;
+}
+
+if (dashboardPayload.schemaVersion !== 1) {
+  throw new Error(`Unsupported PaperLab dashboard schema: ${dashboardPayload.schemaVersion}`);
+}
+if (!Array.isArray(dashboardPayload.accounts) || dashboardPayload.accounts.length === 0) {
+  throw new Error("PaperLab dashboard requires at least one account");
+}
+if (!dashboardPayload.strategy || typeof dashboardPayload.strategy !== "object") {
+  throw new Error("PaperLab dashboard strategy payload is missing");
+}
+
+const data: DashboardPayload = dashboardPayload;
+const strategy = data.strategy;
+
+const moneyFormatter = new Intl.NumberFormat("zh-CN", {
+  style: "currency",
+  currency: "CNY",
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+});
+const integerFormatter = new Intl.NumberFormat("zh-CN", { maximumFractionDigits: 0 });
+const decimalFormatter = new Intl.NumberFormat("zh-CN", {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+});
+const priceFormatter = new Intl.NumberFormat("zh-CN", {
+  minimumFractionDigits: 3,
+  maximumFractionDigits: 3,
+});
+const compactMoneyFormatter = new Intl.NumberFormat("zh-CN", {
+  style: "currency",
+  currency: "CNY",
+  notation: "compact",
+  maximumFractionDigits: 2,
+});
+const dateTimeFormatter = new Intl.DateTimeFormat("zh-CN", {
+  timeZone: "Asia/Shanghai",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: false,
+});
+
+const formatMoney = (value: number | null | undefined) =>
+  typeof value === "number" && Number.isFinite(value) ? moneyFormatter.format(value) : "—";
+const formatCompactMoney = (value: number | null | undefined) =>
+  typeof value === "number" && Number.isFinite(value) ? compactMoneyFormatter.format(value) : "—";
+const formatInteger = (value: number | null | undefined) =>
+  typeof value === "number" && Number.isFinite(value) ? integerFormatter.format(value) : "—";
+const formatDecimal = (value: number | null | undefined) =>
+  typeof value === "number" && Number.isFinite(value) ? decimalFormatter.format(value) : "—";
+const formatPrice = (value: number | null | undefined) =>
+  typeof value === "number" && Number.isFinite(value) ? priceFormatter.format(value) : "—";
+const formatPercent = (value: number | null | undefined, signed = false) => {
+  if (typeof value !== "number" || !Number.isFinite(value)) return "—";
+  const prefix = signed && value > 0 ? "+" : "";
+  return `${prefix}${(value * 100).toFixed(2)}%`;
+};
+const formatPercentPoints = (value: number | null | undefined) =>
+  typeof value === "number" && Number.isFinite(value) ? `${value.toFixed(2)}%` : "—";
+const formatDate = (value: string | null | undefined) => value?.slice(0, 10) || "尚未记账";
+const formatPlanTime = (value: string | null | undefined) => value?.slice(0, 5) || "—";
+const formatDateTime = (value: string) => dateTimeFormatter.format(new Date(value));
+const toneFor = (value: number | null | undefined) =>
+  typeof value !== "number" || value === 0 ? "neutral" : value > 0 ? "positive" : "negative";
+
+const orderStatusLabels: Record<string, string> = {
+  planned: "计划中",
+  pending: "待处理",
+  submitted: "已提交",
+  filled: "已成交",
+  cancelled: "已撤销",
+  rejected: "已拒绝",
+};
+const sideLabels: Record<string, string> = { buy: "买入", sell: "卖出" };
+const executionLabels: Record<string, string> = {
+  next_available_market_open: "下个可用开盘",
+};
+const regimeLabels: Record<string, string> = {
+  risk_on: "进攻",
+  neutral: "中性",
+  risk_off: "防守",
+};
+const volatilityLabels: Record<string, string> = {
+  low: "低波动",
+  normal: "正常波动",
+  high: "高波动",
+};
+const deploymentLabels: Record<string, string> = {
+  experimental_not_live_eligible: "实验中 · 未通过实盘门槛",
+  paper_only: "仅模拟盘",
+  live_eligible: "通过实盘门槛",
+};
+const gateLabels: Record<string, string> = {
+  all_fold_selections_eligible: "全部训练折参数合格",
+  full_sample_not_halted: "全样本未触发风控停机",
+  latest_training_candidate_eligible: "最新训练候选合格",
+  oos_closed_trades: "样本外成交数量充足",
+  oos_max_drawdown: "样本外最大回撤合格",
+  oos_not_halted: "样本外未触发风控停机",
+  oos_profit_factor: "样本外盈亏比合格",
+  oos_sharpe: "样本外夏普率合格",
+  unvalidated_sessions: "不存在未验证交易区间",
+};
+const parameterLabels: Record<string, string> = {
+  momentumWindows: "动量窗口",
+  momentum_windows: "动量窗口",
+  minimumScore: "最低评分",
+  minimum_score: "最低评分",
+  maximumPositions: "最多持仓",
+  maximum_positions: "最多持仓",
+  rebalanceWeekday: "调仓日",
+  rebalance_weekday: "调仓日",
+  rebalanceThreshold: "调仓阈值",
+  rebalance_threshold: "调仓阈值",
+};
+const weekdayLabels: Record<number, string> = {
+  0: "周一",
+  1: "周二",
+  2: "周三",
+  3: "周四",
+  4: "周五",
+};
+const formatParameter = (key: string, value: string | number | boolean | number[]) => {
+  if (Array.isArray(value)) return value.join(" / ");
+  if (["rebalanceThreshold", "rebalance_threshold"].includes(key) && typeof value === "number") return formatPercent(value);
+  if (["rebalanceWeekday", "rebalance_weekday"].includes(key) && typeof value === "number") return weekdayLabels[value] ?? String(value);
+  if (typeof value === "boolean") return value ? "是" : "否";
+  return String(value);
+};
+
+const validationSets = [
+  { id: "backtest", title: "全样本回测", metrics: strategy.backtest },
+  { id: "walk-forward", title: "滚动样本外", metrics: strategy.walkForward },
+];
+const dataSource = data.dataStatus.source || data.dataStatus.sourceSummary || "PaperLab 本地导出";
+const dataSummary = data.dataStatus.notes || data.dataStatus.sourceSummary || dataSource;
+const dataWarnings = data.dataStatus.warnings ?? [];
+const formatValidationPeriod = (period: ValidationMetrics["period"]) => {
+  if (!period) return null;
+  return typeof period === "string" ? period : `${formatDate(period.start)} — ${formatDate(period.end)}`;
+};
+---
+
+<div class="paperlab-dashboard" data-paperlab-dashboard>
+  <header class="dashboard-header">
+    <div class="dashboard-title-group">
+      <p class="dashboard-kicker">PaperLab / Local paper trading</p>
+      <p class="dashboard-status-line">
+        <span class:list={["status-dot", data.dataStatus.isLive || data.dataStatus.status === "live" ? "is-live" : "is-close"]} aria-hidden="true"></span>
+        <strong>{data.dataStatus.label}</strong>
+        <span>市场日 {data.marketDate}</span>
+      </p>
+    </div>
+    <dl class="dashboard-meta">
+      <div>
+        <dt>数据生成</dt>
+        <dd>{formatDateTime(data.generatedAt)}</dd>
+      </div>
+      <div>
+        <dt>策略版本</dt>
+        <dd>{strategy.version}</dd>
+      </div>
+    </dl>
+  </header>
+
+  <div class="account-switcher" role="tablist" aria-label="模拟账户">
+    {data.accounts.map((account, index) => (
+      <button
+        type="button"
+        class="account-tab"
+        id={`account-tab-${account.id}`}
+        role="tab"
+        aria-selected={index === 0 ? "true" : "false"}
+        aria-controls={`account-panel-${account.id}`}
+        tabindex={index === 0 ? 0 : -1}
+        data-account-tab={account.id}
+      >
+        <span>{account.label}</span>
+        <small>{formatCompactMoney(account.equity)}</small>
+      </button>
+    ))}
+  </div>
+
+  <div class="account-panels">
+    {data.accounts.map((account, index) => {
+      const kpis = [
+        { label: "总资产", value: formatMoney(account.equity), tone: "neutral", context: `初始 ${formatCompactMoney(account.capital)}` },
+        { label: "现金", value: formatMoney(account.cash), tone: "neutral", context: `可用占比 ${formatPercent(account.equity ? account.cash / account.equity : 0)}` },
+        { label: "持仓市值", value: formatMoney(account.marketValue), tone: "neutral", context: `${account.positionCount} 个持仓` },
+        { label: "累计收益", value: formatPercent(account.totalReturn, true), tone: toneFor(account.totalReturn), context: `成交 ${account.fillCount} 笔` },
+        { label: "当前回撤", value: formatPercent(account.drawdown), tone: toneFor(account.drawdown), context: `盯市 ${formatDate(account.lastMarkDate)}` },
+        { label: "待处理订单", value: String(account.pendingOrderCount), tone: account.pendingOrderCount ? "warning" : "neutral", context: account.halted ? "账户已停机" : "账户运行中" },
+      ];
+
+      return (
+        <section
+          class="account-panel"
+          id={`account-panel-${account.id}`}
+          role="tabpanel"
+          aria-labelledby={`account-tab-${account.id}`}
+          hidden={index !== 0}
+          data-account-panel={account.id}
+        >
+          <div class="account-heading">
+            <div>
+              <p class="section-label">ACCOUNT / {account.id}</p>
+              <h2>{account.label}</h2>
+            </div>
+            <span class:list={["state-label", account.halted ? "is-negative" : "is-positive"]}>
+              {account.halted ? "风控停机" : "运行中"}
+            </span>
+          </div>
+
+          <dl class="kpi-grid">
+            {kpis.map((kpi) => (
+              <div class="kpi" data-tone={kpi.tone}>
+                <dt>{kpi.label}</dt>
+                <dd>{kpi.value}</dd>
+                <span>{kpi.context}</span>
+              </div>
+            ))}
+          </dl>
+
+          <section class="workspace-section equity-section" aria-labelledby={`equity-title-${account.id}`}>
+            <header class="section-heading">
+              <div>
+                <p class="section-label">EQUITY</p>
+                <h3 id={`equity-title-${account.id}`}>权益曲线</h3>
+              </div>
+              <p>{account.equityCurve.length} 个净值记录</p>
+            </header>
+            {account.equityCurve.length > 0 ? (
+              <div class="chart-frame">
+                <svg
+                  class="equity-chart"
+                  data-equity-chart
+                  data-points={JSON.stringify(account.equityCurve)}
+                  role="img"
+                  aria-labelledby={`equity-svg-title-${account.id} equity-svg-desc-${account.id}`}
+                >
+                  <title id={`equity-svg-title-${account.id}`}>{account.label}权益曲线</title>
+                  <desc id={`equity-svg-desc-${account.id}`}>
+                    {`共 ${account.equityCurve.length} 个真实盯市记录，最新权益 ${formatMoney(account.equity)}。`}
+                  </desc>
+                  <g data-chart-layer></g>
+                </svg>
+              </div>
+            ) : (
+              <div class="empty-state">
+                <strong>尚无权益曲线</strong>
+                <span>账户还没有完成首个盯市日。</span>
+              </div>
+            )}
+          </section>
+
+          <section class="workspace-section" aria-labelledby={`positions-title-${account.id}`}>
+            <header class="section-heading">
+              <div>
+                <p class="section-label">POSITIONS</p>
+                <h3 id={`positions-title-${account.id}`}>当前持仓</h3>
+              </div>
+              <p>{account.positionCount} 个标的</p>
+            </header>
+            {account.positions.length > 0 ? (
+              <div class="table-scroll">
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="col">标的</th>
+                      <th scope="col" class="numeric">数量</th>
+                      <th scope="col" class="numeric">成本价</th>
+                      <th scope="col" class="numeric">最新价</th>
+                      <th scope="col" class="numeric">市值</th>
+                      <th scope="col" class="numeric">浮动盈亏</th>
+                      <th scope="col" class="numeric">权重</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {account.positions.map((position) => (
+                      <tr>
+                        <th scope="row">
+                          <strong>{position.symbol}</strong>
+                          <span>{position.name || "—"}</span>
+                        </th>
+                        <td class="numeric">{formatInteger(position.quantity)}</td>
+                        <td class="numeric">{formatPrice(position.averageCost)}</td>
+                        <td class="numeric">{formatPrice(position.lastPrice)}</td>
+                        <td class="numeric">{formatMoney(position.marketValue)}</td>
+                        <td class="numeric" data-tone={toneFor(position.unrealizedPnl)}>{formatMoney(position.unrealizedPnl)}</td>
+                        <td class="numeric">{formatPercent(position.weight)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div class="empty-state">
+                <strong>当前空仓</strong>
+                <span>账本中没有持仓记录。</span>
+              </div>
+            )}
+          </section>
+
+          <section class="workspace-section" aria-labelledby={`orders-title-${account.id}`}>
+            <header class="section-heading">
+              <div>
+                <p class="section-label">ORDERS</p>
+                <h3 id={`orders-title-${account.id}`}>待处理订单</h3>
+              </div>
+              <p>{account.pendingOrderCount} 笔</p>
+            </header>
+            {account.pendingOrders.length > 0 ? (
+              <div class="table-scroll">
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="col">标的</th>
+                      <th scope="col">方向</th>
+                      <th scope="col" class="numeric">计划数量</th>
+                      <th scope="col" class="numeric">参考价</th>
+                      <th scope="col" class="numeric">目标权重</th>
+                      <th scope="col">执行</th>
+                      <th scope="col">状态</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {account.pendingOrders.map((order) => (
+                      <tr>
+                        <th scope="row">
+                          <strong>{order.symbol}</strong>
+                          <span>{order.name || "—"}</span>
+                        </th>
+                        <td data-side={order.side}>{sideLabels[order.side] ?? order.side}</td>
+                        <td class="numeric">{formatInteger(order.quantity)}</td>
+                        <td class="numeric">{formatPrice(order.referencePrice)}</td>
+                        <td class="numeric">{formatPercent(order.targetWeight)}</td>
+                        <td>{executionLabels[order.executeOn ?? ""] ?? order.executeOn ?? "—"}</td>
+                        <td><span class="table-status">{orderStatusLabels[order.status] ?? order.status}</span></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div class="empty-state">
+                <strong>没有待处理订单</strong>
+                <span>当前未创建或提交任何订单。</span>
+              </div>
+            )}
+          </section>
+
+          <section class="workspace-section" aria-labelledby={`fills-title-${account.id}`}>
+            <header class="section-heading">
+              <div>
+                <p class="section-label">FILLS</p>
+                <h3 id={`fills-title-${account.id}`}>最近成交</h3>
+              </div>
+              <p>累计 {account.fillCount} 笔</p>
+            </header>
+            {account.recentFills.length > 0 ? (
+              <div class="table-scroll">
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="col">时间</th>
+                      <th scope="col">标的</th>
+                      <th scope="col">方向</th>
+                      <th scope="col" class="numeric">数量</th>
+                      <th scope="col" class="numeric">成交价</th>
+                      <th scope="col" class="numeric">成交额</th>
+                      <th scope="col" class="numeric">费用</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {account.recentFills.map((fill) => (
+                      <tr>
+                        <td>{fill.time ? formatDateTime(fill.time) : "—"}</td>
+                        <th scope="row">
+                          <strong>{fill.symbol}</strong>
+                          <span>{fill.name || "—"}</span>
+                        </th>
+                        <td data-side={fill.side}>{sideLabels[fill.side] ?? fill.side}</td>
+                        <td class="numeric">{formatInteger(fill.quantity)}</td>
+                        <td class="numeric">{formatPrice(fill.price)}</td>
+                        <td class="numeric">{formatMoney(fill.amount ?? fill.quantity * fill.price)}</td>
+                        <td class="numeric">{formatMoney(fill.fee)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div class="empty-state">
+                <strong>尚无成交</strong>
+                <span>模拟账本没有记录任何成交。</span>
+              </div>
+            )}
+          </section>
+
+          {account.entryPlan && (
+            <section class="workspace-section entry-plan" aria-labelledby={`entry-plan-title-${account.id}`}>
+              <header class="section-heading entry-plan-heading">
+                <div>
+                  <p class="section-label">CONDITIONAL PLAN</p>
+                  <h3 id={`entry-plan-title-${account.id}`}>盘中条件计划</h3>
+                </div>
+                <span class:list={["state-label", account.entryPlan.dataQuality?.executionReady ? "is-positive" : "is-warning"]}>
+                  {account.entryPlan.dataQuality?.executionReady ? "可执行" : "等待盘中复核"}
+                </span>
+              </header>
+
+              {account.entryPlan.candidate && (
+                <div class="candidate-line">
+                  <div>
+                    <strong>{account.entryPlan.candidate.symbol}</strong>
+                    <span>{account.entryPlan.candidate.name || "候选标的"}</span>
+                  </div>
+                  <dl>
+                    <div><dt>数量</dt><dd>{formatInteger(account.entryPlan.candidate.quantity)} 份</dd></div>
+                    <div><dt>最高限价</dt><dd>{formatPrice(account.entryPlan.candidate.maximumLimitPrice)}</dd></div>
+                    <div><dt>最大占用</dt><dd>{formatMoney(account.entryPlan.candidate.maximumNotional)}</dd></div>
+                    <div><dt>制度</dt><dd>{account.entryPlan.candidate.settlement || "—"}</dd></div>
+                  </dl>
+                </div>
+              )}
+
+              {account.entryPlan.executionWindow && (
+                <ol class="execution-timeline" aria-label="执行时间窗口">
+                  <li><span>观察</span><strong>{formatPlanTime(account.entryPlan.executionWindow.observeFrom)}</strong></li>
+                  <li><span>允许入场</span><strong>{formatPlanTime(account.entryPlan.executionWindow.entryFrom)}</strong></li>
+                  <li><span>计划失效</span><strong>{formatPlanTime(account.entryPlan.executionWindow.expiresAt)}</strong></li>
+                </ol>
+              )}
+
+              {account.entryPlan.entryGate && (
+                <div class="plan-columns">
+                  <div>
+                    <h4>入场闸门</h4>
+                    <dl class="rule-list">
+                      <div><dt>触发价</dt><dd>{account.entryPlan.entryGate.triggerFormula}</dd></div>
+                      <div><dt>价格确认</dt><dd>触发线上方保持 {account.entryPlan.entryGate.minimumHoldSeconds} 秒</dd></div>
+                      <div><dt>VWAP</dt><dd>{account.entryPlan.entryGate.aboveVwap ? "必须站上" : "不限制"}</dd></div>
+                      <div><dt>09:45 成交额</dt><dd>不低于 {formatCompactMoney(account.entryPlan.entryGate.minimumTurnover)}</dd></div>
+                      <div><dt>IOPV 溢价</dt><dd>不高于 {formatPercentPoints(account.entryPlan.entryGate.maximumIopvPremium)}</dd></div>
+                      <div><dt>{account.entryPlan.entryGate.benchmark}</dt><dd>涨跌不低于 {formatPercentPoints(account.entryPlan.entryGate.benchmarkMinimumChange)}</dd></div>
+                    </dl>
+                  </div>
+                  {account.entryPlan.exitPolicy && (
+                    <div>
+                      <h4>退出规则</h4>
+                      <dl class="rule-list">
+                        <div><dt>风险线</dt><dd>{account.entryPlan.exitPolicy.riskExit}</dd></div>
+                        <div><dt>止盈线</dt><dd>{account.entryPlan.exitPolicy.takeProfit}</dd></div>
+                        <div><dt>时间退出</dt><dd>{account.entryPlan.exitPolicy.timeExit}</dd></div>
+                        <div><dt>当日卖出</dt><dd>{account.entryPlan.exitPolicy.sameDayExitAllowed ? "允许" : "不允许"}</dd></div>
+                      </dl>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {account.entryPlan.dataQuality && (
+                <p class="plan-quality" role={account.entryPlan.dataQuality.executionReady ? undefined : "status"}>
+                  <strong>{account.entryPlan.dataQuality.executionReady ? "数据已就绪" : "尚未生成订单"}</strong>
+                  <span>{account.entryPlan.dataQuality.reason}</span>
+                </p>
+              )}
+            </section>
+          )}
+        </section>
+      );
+    })}
+  </div>
+
+  <section class="strategy-section" aria-labelledby="strategy-title">
+    <header class="strategy-heading">
+      <div>
+        <p class="section-label">STRATEGY / {strategy.version}</p>
+        <h2 id="strategy-title">策略验证</h2>
+      </div>
+      <span class:list={["state-label", strategy.liveGatePassed ? "is-positive" : "is-negative"]}>
+        {strategy.liveGatePassed ? "实盘门槛通过" : "实盘门槛未通过"}
+      </span>
+    </header>
+
+    <div class="strategy-context">
+      <dl>
+        <div><dt>部署状态</dt><dd>{deploymentLabels[strategy.deploymentStatus] ?? strategy.deploymentStatus}</dd></div>
+        <div><dt>市场状态</dt><dd>{regimeLabels[strategy.regime] ?? strategy.regime}</dd></div>
+        <div><dt>波动状态</dt><dd>{volatilityLabels[strategy.volatilityRegime] ?? strategy.volatilityRegime}</dd></div>
+        <div><dt>信号日期</dt><dd>{formatDate(strategy.signalDate)}</dd></div>
+      </dl>
+    </div>
+
+    <section class="strategy-subsection" aria-labelledby="targets-title">
+      <header class="section-heading">
+        <div>
+          <p class="section-label">SIGNAL</p>
+          <h3 id="targets-title">目标配置</h3>
+        </div>
+        <p>{strategy.targets.length} 个标的</p>
+      </header>
+      {strategy.targets.length > 0 ? (
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">标的</th>
+                <th scope="col" class="numeric">模型评分</th>
+                <th scope="col" class="numeric">目标权重</th>
+                <th scope="col">配置刻度</th>
+              </tr>
+            </thead>
+            <tbody>
+              {strategy.targets.map((target) => (
+                <tr>
+                  <th scope="row"><strong>{target.symbol}</strong><span>{target.name || "—"}</span></th>
+                  <td class="numeric">{formatDecimal(target.score)}</td>
+                  <td class="numeric">{formatPercent(target.weight)}</td>
+                  <td class="allocation-cell">
+                    <div class="allocation-track" aria-hidden="true">
+                      <span style={`--allocation: ${Math.max(0, Math.min(1, target.weight)) * 100}%`}></span>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <div class="empty-state"><strong>没有目标配置</strong><span>最新信号未选出可配置标的。</span></div>
+      )}
+    </section>
+
+    <div class="validation-grid">
+      {validationSets.map((set) => {
+        const metrics = set.metrics;
+        const metricItems = [
+          { label: "累计收益", value: formatPercent(metrics.totalReturn, true), tone: toneFor(metrics.totalReturn) },
+          { label: "最大回撤", value: formatPercent(metrics.maxDrawdown), tone: toneFor(metrics.maxDrawdown) },
+          { label: "夏普率", value: formatDecimal(metrics.sharpe), tone: toneFor(metrics.sharpe) },
+          { label: "盈亏比", value: formatDecimal(metrics.profitFactor), tone: toneFor((metrics.profitFactor ?? 0) - 1) },
+          { label: "胜率", value: formatPercent(metrics.winRate), tone: "neutral" },
+          { label: "闭合交易", value: formatInteger(metrics.tradeCount), tone: "neutral" },
+        ];
+        return (
+          <article class="validation-panel" aria-labelledby={`${set.id}-title`}>
+            <header>
+              <div>
+                <p class="section-label">{set.id.toUpperCase()}</p>
+                <h3 id={`${set.id}-title`}>{set.title}</h3>
+                {metrics.label && <p>{metrics.label}</p>}
+              </div>
+              <span class:list={["state-label", metrics.halted ? "is-negative" : "is-positive"]}>
+                {metrics.halted ? "已触发停机" : "未触发停机"}
+              </span>
+            </header>
+            <dl class="validation-metrics">
+              {metricItems.map((item) => (
+                <div data-tone={item.tone}><dt>{item.label}</dt><dd>{item.value}</dd></div>
+              ))}
+            </dl>
+            {metrics.equityCurve && metrics.equityCurve.length > 0 && (
+              <div class="validation-chart">
+                <svg
+                  class="equity-chart is-compact"
+                  data-equity-chart
+                  data-points={JSON.stringify(metrics.equityCurve)}
+                  role="img"
+                  aria-labelledby={`${set.id}-chart-title ${set.id}-chart-desc`}
+                >
+                  <title id={`${set.id}-chart-title`}>{set.title}权益曲线</title>
+                  <desc id={`${set.id}-chart-desc`}>
+                    {`${metrics.equityCurve.length} 个真实回测净值记录，累计收益 ${formatPercent(metrics.totalReturn, true)}。`}
+                  </desc>
+                  <g data-chart-layer></g>
+                </svg>
+              </div>
+            )}
+            <p class="validation-note">
+              {formatValidationPeriod(metrics.period)
+                ? formatValidationPeriod(metrics.period)
+                : metrics.halted
+                  ? `停机日期 ${formatDate(metrics.haltDate)}`
+                  : `验证至 ${formatDate(metrics.validatedThrough)}`}
+              {typeof metrics.foldCount === "number" && ` · ${metrics.foldCount} 个滚动折`}
+            </p>
+          </article>
+        );
+      })}
+    </div>
+
+    <div class="strategy-detail-grid">
+      <section class="strategy-subsection" aria-labelledby="parameters-title">
+        <header class="section-heading">
+          <div><p class="section-label">PARAMETERS</p><h3 id="parameters-title">当前参数</h3></div>
+        </header>
+        <dl class="parameter-list">
+          {Object.entries(strategy.parameters).map(([key, value]) => (
+            <div><dt>{parameterLabels[key] ?? key}</dt><dd>{formatParameter(key, value)}</dd></div>
+          ))}
+        </dl>
+      </section>
+
+      <section class="strategy-subsection" aria-labelledby="gates-title">
+        <header class="section-heading">
+          <div><p class="section-label">FAILED GATES</p><h3 id="gates-title">未通过门槛</h3></div>
+          <p>{strategy.failedGates.length} 项</p>
+        </header>
+        {strategy.failedGates.length > 0 ? (
+          <ul class="gate-list">
+            {strategy.failedGates.map((gate) => <li>{gateLabels[gate] ?? gate}</li>)}
+          </ul>
+        ) : (
+          <div class="empty-state is-compact"><strong>全部通过</strong><span>当前没有失败门槛。</span></div>
+        )}
+      </section>
+    </div>
+  </section>
+
+  <footer class="data-quality">
+    <div>
+      <p class="section-label">DATA QUALITY</p>
+      <strong>{data.dataStatus.label}</strong>
+      <span>{dataSummary}</span>
+    </div>
+    <div class="data-quality-detail">
+      <dl>
+        <div><dt>来源</dt><dd>{dataSource}</dd></div>
+        <div><dt>市场日</dt><dd>{data.marketDate}</dd></div>
+        <div><dt>提示</dt><dd>{dataWarnings.length} 项</dd></div>
+        <div><dt>Schema</dt><dd>v{data.schemaVersion}</dd></div>
+      </dl>
+      {dataWarnings.length > 0 && (
+        <ul class="quality-warnings" aria-label="数据质量提示">
+          {dataWarnings.map((warning) => <li>{warning}</li>)}
+        </ul>
+      )}
+    </div>
+  </footer>
+  <aside class="dashboard-disclaimer" aria-label="风险声明">
+    <strong>风险声明</strong>
+    <p>{data.disclaimer}</p>
+  </aside>
+</div>
+
+<script>
+  const svgNamespace = "http://www.w3.org/2000/svg";
+
+  function createSvgElement(tag: string, attributes: Record<string, string | number> = {}) {
+    const element = document.createElementNS(svgNamespace, tag);
+    for (const [name, value] of Object.entries(attributes)) {
+      element.setAttribute(name, String(value));
+    }
+    return element;
+  }
+
+  function drawEquityChart(svg: SVGSVGElement) {
+    const layer = svg.querySelector<SVGGElement>("[data-chart-layer]");
+    if (!layer || svg.getClientRects().length === 0) return;
+
+    let rawPoints: Array<{ date: string; equity: number }> = [];
+    try {
+      rawPoints = JSON.parse(svg.dataset.points || "[]");
+    } catch {
+      rawPoints = [];
+    }
+    const points = rawPoints.filter(
+      (point) => typeof point.date === "string" && Number.isFinite(Number(point.equity)),
+    );
+    if (points.length === 0) return;
+
+    const measuredWidth = Math.floor(svg.getBoundingClientRect().width);
+    if (measuredWidth < 160) return;
+    const width = measuredWidth;
+    const height = width < 480 ? 190 : 230;
+    const margin = {
+      top: 18,
+      right: width < 480 ? 14 : 22,
+      bottom: 34,
+      left: width < 480 ? 58 : 72,
+    };
+    const plotWidth = width - margin.left - margin.right;
+    const plotHeight = height - margin.top - margin.bottom;
+    svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+    svg.style.height = `${height}px`;
+    layer.replaceChildren();
+
+    const values = points.map((point) => Number(point.equity));
+    const timestamps = points.map((point, index) => {
+      const timestamp = Date.parse(`${point.date.slice(0, 10)}T00:00:00+08:00`);
+      return Number.isFinite(timestamp) ? timestamp : index;
+    });
+    const minValue = Math.min(...values);
+    const maxValue = Math.max(...values);
+    const valuePadding = minValue === maxValue
+      ? Math.max(Math.abs(minValue) * 0.005, 1)
+      : (maxValue - minValue) * 0.12;
+    const yMin = minValue - valuePadding;
+    const yMax = maxValue + valuePadding;
+    const xMin = Math.min(...timestamps);
+    const xMax = Math.max(...timestamps);
+    const xFor = (timestamp: number) =>
+      xMin === xMax ? margin.left + plotWidth / 2 : margin.left + ((timestamp - xMin) / (xMax - xMin)) * plotWidth;
+    const yFor = (value: number) => margin.top + ((yMax - value) / (yMax - yMin)) * plotHeight;
+    const compactNumber = new Intl.NumberFormat("zh-CN", {
+      notation: "compact",
+      maximumFractionDigits: 2,
+    });
+    const moneyNumber = new Intl.NumberFormat("zh-CN", {
+      style: "currency",
+      currency: "CNY",
+      maximumFractionDigits: 2,
+    });
+
+    const frame = createSvgElement("rect", {
+      x: margin.left,
+      y: margin.top,
+      width: plotWidth,
+      height: plotHeight,
+      class: "paperlab-chart-frame",
+    });
+    layer.append(frame);
+
+    const tickCount = width < 480 ? 3 : 4;
+    for (let tick = 0; tick <= tickCount; tick += 1) {
+      const ratio = tick / tickCount;
+      const value = yMax - ratio * (yMax - yMin);
+      const y = margin.top + ratio * plotHeight;
+      layer.append(
+        createSvgElement("line", {
+          x1: margin.left,
+          x2: margin.left + plotWidth,
+          y1: y,
+          y2: y,
+          class: "paperlab-chart-gridline",
+        }),
+      );
+      const label = createSvgElement("text", {
+        x: margin.left - 10,
+        y: y + 4,
+        "text-anchor": "end",
+        class: "paperlab-chart-label",
+      });
+      label.textContent = compactNumber.format(value);
+      layer.append(label);
+    }
+
+    const desiredXTicks = width < 480 ? 2 : Math.min(4, points.length);
+    const tickIndexes = new Set<number>();
+    if (points.length === 1) {
+      tickIndexes.add(0);
+    } else {
+      for (let tick = 0; tick < desiredXTicks; tick += 1) {
+        tickIndexes.add(Math.round((tick / Math.max(desiredXTicks - 1, 1)) * (points.length - 1)));
+      }
+    }
+    for (const index of tickIndexes) {
+      const x = xFor(timestamps[index]);
+      const label = createSvgElement("text", {
+        x,
+        y: height - 11,
+        "text-anchor": index === 0 && points.length > 1 ? "start" : index === points.length - 1 && points.length > 1 ? "end" : "middle",
+        class: "paperlab-chart-label",
+      });
+      label.textContent = points[index].date.slice(5, 10);
+      layer.append(label);
+    }
+
+    if (points.length > 1) {
+      const pathData = points
+        .map((point, index) => `${index === 0 ? "M" : "L"}${xFor(timestamps[index]).toFixed(2)},${yFor(Number(point.equity)).toFixed(2)}`)
+        .join(" ");
+      layer.append(createSvgElement("path", { d: pathData, class: "paperlab-equity-line" }));
+    }
+
+    const markerIndexes = points.length <= 16 ? points.map((_, index) => index) : [0, points.length - 1];
+    for (const index of markerIndexes) {
+      const marker = createSvgElement("circle", {
+        cx: xFor(timestamps[index]),
+        cy: yFor(values[index]),
+        r: index === points.length - 1 ? 4 : 3,
+        class: "paperlab-equity-marker",
+      });
+      const title = createSvgElement("title");
+      title.textContent = `${points[index].date} · ${moneyNumber.format(values[index])}`;
+      marker.append(title);
+      layer.append(marker);
+    }
+
+    const lastIndex = points.length - 1;
+    const lastX = xFor(timestamps[lastIndex]);
+    const lastY = yFor(values[lastIndex]);
+    const valueLabel = createSvgElement("text", {
+      x: lastX > width - 112 ? lastX - 9 : lastX + 9,
+      y: Math.max(margin.top + 13, lastY - 9),
+      "text-anchor": lastX > width - 112 ? "end" : "start",
+      class: "paperlab-chart-value",
+    });
+    valueLabel.textContent = moneyNumber.format(values[lastIndex]);
+    layer.append(valueLabel);
+  }
+
+  function initializeDashboard(root: HTMLElement) {
+    const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>("[data-account-tab]"));
+    const panels = Array.from(root.querySelectorAll<HTMLElement>("[data-account-panel]"));
+    const charts = Array.from(root.querySelectorAll<SVGSVGElement>("[data-equity-chart]"));
+
+    const activate = (accountId: string, moveFocus = false) => {
+      for (const tab of tabs) {
+        const selected = tab.dataset.accountTab === accountId;
+        tab.setAttribute("aria-selected", String(selected));
+        tab.tabIndex = selected ? 0 : -1;
+        if (selected && moveFocus) tab.focus();
+      }
+      for (const panel of panels) {
+        panel.hidden = panel.dataset.accountPanel !== accountId;
+      }
+      requestAnimationFrame(() => {
+        for (const chart of charts) drawEquityChart(chart);
+      });
+    };
+
+    tabs.forEach((tab, index) => {
+      tab.addEventListener("click", () => activate(tab.dataset.accountTab || ""));
+      tab.addEventListener("keydown", (event) => {
+        if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+        event.preventDefault();
+        let nextIndex = index;
+        if (event.key === "ArrowLeft") nextIndex = (index - 1 + tabs.length) % tabs.length;
+        if (event.key === "ArrowRight") nextIndex = (index + 1) % tabs.length;
+        if (event.key === "Home") nextIndex = 0;
+        if (event.key === "End") nextIndex = tabs.length - 1;
+        activate(tabs[nextIndex]?.dataset.accountTab || "", true);
+      });
+    });
+
+    for (const chart of charts) drawEquityChart(chart);
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.target instanceof SVGSVGElement) drawEquityChart(entry.target);
+      }
+    });
+    for (const chart of charts) observer.observe(chart);
+  }
+
+  document.querySelectorAll<HTMLElement>("[data-paperlab-dashboard]").forEach(initializeDashboard);
+</script>

@@ -23,6 +23,7 @@ export interface SiteConfig {
   }>;
   paths: {
     notes: "/notes/";
+    paperlab: "/paperlab/";
     about: "/about/";
   };
 }
@@ -62,6 +63,7 @@ export const siteConfig: SiteConfig = {
   ],
   paths: {
     notes: "/notes/",
+    paperlab: "/paperlab/",
     about: "/about/",
   },
 };

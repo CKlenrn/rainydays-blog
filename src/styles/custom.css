@@ -304,3 +304,915 @@
     translate: none;
   }
 }
+
+/* PaperLab dashboard */
+  .paperlab-dashboard {
+    --pl-border: #34443e;
+    --pl-border-strong: #4d635b;
+    --pl-surface: #18201d;
+    --pl-surface-raised: #202b27;
+    --pl-surface-soft: #14231e;
+    --pl-text: var(--sl-color-white);
+    --pl-muted: var(--sl-color-gray-2);
+    --pl-positive: #70d2ae;
+    --pl-negative: #f09a84;
+    --pl-warning: #e6bd67;
+    --pl-chart: #70d2ae;
+    width: min(100%, 76rem);
+    margin-inline: auto;
+    color: var(--pl-text);
+    font-variant-numeric: tabular-nums;
+  }
+
+  :root[data-theme="light"] .paperlab-dashboard {
+    --pl-border: #d8dfdc;
+    --pl-border-strong: #b8c5c0;
+    --pl-surface: #ffffff;
+    --pl-surface-raised: #f3f7f5;
+    --pl-surface-soft: #eaf4ef;
+    --pl-text: #17221e;
+    --pl-muted: #53645d;
+    --pl-positive: #197454;
+    --pl-negative: #b84d37;
+    --pl-warning: #845f16;
+    --pl-chart: #197454;
+  }
+
+  .paperlab-dashboard :where(h1, h2, h3, h4, p, dl, dd, ol, ul) {
+    margin: 0;
+  }
+
+  .paperlab-dashboard .dashboard-header {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 2rem;
+    padding: 1rem 0 1.5rem;
+    border-bottom: 1px solid var(--pl-border);
+  }
+
+  .paperlab-dashboard .dashboard-kicker,
+  .paperlab-dashboard .section-label {
+    color: var(--pl-positive);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+
+  .paperlab-dashboard .dashboard-status-line {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.75rem !important;
+    color: var(--pl-muted);
+    font-size: 0.82rem;
+  }
+
+  .paperlab-dashboard .dashboard-status-line strong {
+    color: var(--pl-text);
+  }
+
+  .paperlab-dashboard .status-dot {
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 50%;
+    background: var(--pl-warning);
+  }
+
+  .paperlab-dashboard .status-dot.is-live {
+    background: var(--pl-positive);
+  }
+
+  .paperlab-dashboard .dashboard-meta {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(9rem, auto));
+    gap: 1.25rem;
+  }
+
+  .paperlab-dashboard .dashboard-meta dt,
+  .paperlab-dashboard .dashboard-meta dd,
+  .paperlab-dashboard .strategy-context dt,
+  .paperlab-dashboard .strategy-context dd {
+    font-size: 0.78rem;
+  }
+
+  .paperlab-dashboard .dashboard-meta dt,
+  .paperlab-dashboard .strategy-context dt {
+    color: var(--pl-muted);
+  }
+
+  .paperlab-dashboard .dashboard-meta dd,
+  .paperlab-dashboard .strategy-context dd {
+    margin-top: 0.25rem;
+    color: var(--pl-text);
+    font-weight: 650;
+  }
+
+  .paperlab-dashboard .account-switcher {
+    display: inline-grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(11rem, 1fr);
+    max-width: 100%;
+    margin-top: 1.5rem;
+    padding: 0.2rem;
+    border: 1px solid var(--pl-border);
+    border-radius: 7px;
+    background: var(--pl-surface-raised);
+  }
+
+  .paperlab-dashboard .account-tab {
+    display: grid;
+    min-height: 2.8rem;
+    align-content: center;
+    gap: 0.1rem;
+    padding: 0.45rem 0.75rem;
+    border: 0;
+    border-radius: 5px;
+    background: transparent;
+    color: var(--pl-muted);
+    cursor: pointer;
+    font: inherit;
+    text-align: left;
+  }
+
+  .paperlab-dashboard .account-tab span {
+    overflow-wrap: anywhere;
+    font-size: 0.82rem;
+    font-weight: 700;
+  }
+
+  .paperlab-dashboard .account-tab small {
+    font-size: 0.7rem;
+  }
+
+  .paperlab-dashboard .account-tab[aria-selected="true"] {
+    background: var(--pl-surface);
+    color: var(--pl-text);
+    box-shadow: 0 0 0 1px var(--pl-border);
+  }
+
+  .paperlab-dashboard .account-tab:focus-visible {
+    outline: 3px solid var(--pl-positive);
+    outline-offset: 3px;
+  }
+
+  .paperlab-dashboard .account-panel[hidden] {
+    display: none;
+  }
+
+  .paperlab-dashboard .account-heading,
+  .paperlab-dashboard .strategy-heading,
+  .paperlab-dashboard .section-heading,
+  .paperlab-dashboard .validation-panel > header {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .paperlab-dashboard .account-heading {
+    padding: 2rem 0 1rem;
+  }
+
+  .paperlab-dashboard .account-heading h2,
+  .paperlab-dashboard .strategy-heading h2 {
+    margin-top: 0.25rem;
+    color: var(--pl-text);
+    font-size: 1.45rem;
+    letter-spacing: 0;
+  }
+
+  .paperlab-dashboard .state-label,
+  .paperlab-dashboard .table-status {
+    display: inline-flex;
+    align-items: center;
+    min-height: 1.65rem;
+    padding: 0.2rem 0.55rem;
+    border: 1px solid var(--pl-border);
+    border-radius: 999px;
+    color: var(--pl-muted);
+    font-size: 0.72rem;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .paperlab-dashboard .state-label.is-positive {
+    border-color: color-mix(in srgb, var(--pl-positive) 55%, var(--pl-border));
+    color: var(--pl-positive);
+  }
+
+  .paperlab-dashboard .state-label.is-negative {
+    border-color: color-mix(in srgb, var(--pl-negative) 55%, var(--pl-border));
+    color: var(--pl-negative);
+  }
+
+  .paperlab-dashboard .state-label.is-warning {
+    border-color: color-mix(in srgb, var(--pl-warning) 55%, var(--pl-border));
+    color: var(--pl-warning);
+  }
+
+  .paperlab-dashboard .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.6rem;
+  }
+
+  .paperlab-dashboard .kpi {
+    container-type: inline-size;
+    min-width: 0;
+    padding: 0.85rem;
+    border: 1px solid var(--pl-border);
+    border-radius: 6px;
+    background: var(--pl-surface);
+  }
+
+  .paperlab-dashboard .kpi dt {
+    color: var(--pl-muted);
+    font-size: 0.72rem;
+  }
+
+  .paperlab-dashboard .kpi dd {
+    margin-top: 0.4rem;
+    color: var(--pl-text);
+    font-size: clamp(0.82rem, 8cqi, 1.18rem);
+    font-weight: 700;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+
+  .paperlab-dashboard .kpi span {
+    display: block;
+    margin-top: 0.45rem;
+    color: var(--pl-muted);
+    font-size: 0.68rem;
+    line-height: 1.35;
+  }
+
+  .paperlab-dashboard [data-tone="positive"] {
+    color: var(--pl-positive) !important;
+  }
+
+  .paperlab-dashboard [data-tone="negative"] {
+    color: var(--pl-negative) !important;
+  }
+
+  .paperlab-dashboard [data-tone="warning"] {
+    color: var(--pl-warning) !important;
+  }
+
+  .paperlab-dashboard .workspace-section,
+  .paperlab-dashboard .strategy-subsection {
+    padding: 1.75rem 0;
+    border-top: 1px solid var(--pl-border);
+  }
+
+  .paperlab-dashboard .section-heading {
+    margin-bottom: 0.85rem;
+  }
+
+  .paperlab-dashboard .section-heading h3,
+  .paperlab-dashboard .validation-panel h3 {
+    margin-top: 0.2rem;
+    color: var(--pl-text);
+    font-size: 1rem;
+    letter-spacing: 0;
+  }
+
+  .paperlab-dashboard .section-heading > p,
+  .paperlab-dashboard .validation-panel header p,
+  .paperlab-dashboard .validation-note {
+    color: var(--pl-muted);
+    font-size: 0.74rem;
+  }
+
+  .paperlab-dashboard .validation-chart {
+    margin-top: 0.8rem;
+    border-top: 1px solid var(--pl-border);
+    border-bottom: 1px solid var(--pl-border);
+  }
+
+  .paperlab-dashboard .equity-chart.is-compact {
+    height: 12rem;
+  }
+
+  .paperlab-dashboard .chart-frame {
+    min-height: 11.875rem;
+    border-top: 1px solid var(--pl-border);
+    border-bottom: 1px solid var(--pl-border);
+  }
+
+  .paperlab-dashboard .equity-chart {
+    display: block;
+    width: 100%;
+    height: 14.375rem;
+    color: var(--pl-text);
+  }
+
+  .paperlab-dashboard .paperlab-chart-frame {
+    fill: transparent;
+    stroke: var(--pl-border);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .paperlab-dashboard .paperlab-chart-gridline {
+    stroke: var(--pl-border);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .paperlab-dashboard .paperlab-chart-label {
+    fill: var(--pl-muted);
+    font-family: inherit;
+    font-size: 11px;
+  }
+
+  .paperlab-dashboard .paperlab-chart-value {
+    fill: var(--pl-text);
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .paperlab-dashboard .paperlab-equity-line {
+    fill: none;
+    stroke: var(--pl-chart);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 2;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .paperlab-dashboard .paperlab-equity-marker {
+    fill: var(--pl-surface);
+    stroke: var(--pl-chart);
+    stroke-width: 2;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .paperlab-dashboard .empty-state {
+    display: flex;
+    min-height: 5.5rem;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 0.2rem;
+    border-top: 1px dashed var(--pl-border-strong);
+    border-bottom: 1px dashed var(--pl-border-strong);
+    color: var(--pl-muted);
+    text-align: center;
+  }
+
+  .paperlab-dashboard .empty-state strong {
+    color: var(--pl-text);
+    font-size: 0.85rem;
+  }
+
+  .paperlab-dashboard .empty-state span {
+    font-size: 0.75rem;
+  }
+
+  .paperlab-dashboard .empty-state.is-compact {
+    min-height: 4.5rem;
+  }
+
+  .paperlab-dashboard .table-scroll {
+    max-width: 100%;
+    overflow-x: auto;
+    border-top: 1px solid var(--pl-border);
+  }
+
+  .paperlab-dashboard table {
+    width: 100%;
+    min-width: 43rem;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+  }
+
+  .paperlab-dashboard th,
+  .paperlab-dashboard td {
+    padding: 0.72rem 0.65rem;
+    border-bottom: 1px solid var(--pl-border);
+    color: var(--pl-muted);
+    text-align: left;
+    vertical-align: middle;
+  }
+
+  .paperlab-dashboard thead th {
+    color: var(--pl-muted);
+    font-size: 0.68rem;
+    font-weight: 650;
+    white-space: nowrap;
+  }
+
+  .paperlab-dashboard tbody th {
+    color: var(--pl-text);
+    font-weight: 400;
+  }
+
+  .paperlab-dashboard tbody th strong,
+  .paperlab-dashboard tbody th span {
+    display: block;
+  }
+
+  .paperlab-dashboard tbody th span {
+    margin-top: 0.1rem;
+    color: var(--pl-muted);
+    font-size: 0.68rem;
+    font-weight: 400;
+  }
+
+  .paperlab-dashboard tbody tr:hover {
+    background: var(--pl-surface-raised);
+  }
+
+  .paperlab-dashboard .numeric {
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .paperlab-dashboard td[data-side="buy"] {
+    color: var(--pl-positive);
+  }
+
+  .paperlab-dashboard td[data-side="sell"] {
+    color: var(--pl-negative);
+  }
+
+  .paperlab-dashboard .entry-plan-heading {
+    margin-bottom: 1rem;
+  }
+
+  .paperlab-dashboard .candidate-line {
+    display: grid;
+    grid-template-columns: minmax(10rem, 0.8fr) minmax(0, 2.2fr);
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1rem;
+    border: 1px solid var(--pl-border);
+    border-radius: 6px;
+    background: var(--pl-surface);
+  }
+
+  .paperlab-dashboard .candidate-line > div > strong,
+  .paperlab-dashboard .candidate-line > div > span {
+    display: block;
+  }
+
+  .paperlab-dashboard .candidate-line > div > strong {
+    color: var(--pl-text);
+    font-size: 1.35rem;
+  }
+
+  .paperlab-dashboard .candidate-line > div > span {
+    margin-top: 0.15rem;
+    color: var(--pl-muted);
+    font-size: 0.78rem;
+  }
+
+  .paperlab-dashboard .candidate-line dl {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+
+  .paperlab-dashboard .candidate-line dt,
+  .paperlab-dashboard .rule-list dt,
+  .paperlab-dashboard .parameter-list dt,
+  .paperlab-dashboard .data-quality dt {
+    color: var(--pl-muted);
+    font-size: 0.68rem;
+  }
+
+  .paperlab-dashboard .candidate-line dd,
+  .paperlab-dashboard .parameter-list dd,
+  .paperlab-dashboard .data-quality dd {
+    margin-top: 0.22rem;
+    color: var(--pl-text);
+    font-size: 0.82rem;
+    font-weight: 650;
+    overflow-wrap: anywhere;
+  }
+
+  .paperlab-dashboard .execution-timeline {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    margin-top: 1rem !important;
+    padding: 0;
+    list-style: none;
+  }
+
+  .paperlab-dashboard .execution-timeline li {
+    position: relative;
+    display: flex;
+    min-height: 3.5rem;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-top: 1px solid var(--pl-border);
+    border-bottom: 1px solid var(--pl-border);
+  }
+
+  .paperlab-dashboard .execution-timeline li + li {
+    border-left: 1px solid var(--pl-border);
+  }
+
+  .paperlab-dashboard .execution-timeline span {
+    color: var(--pl-muted);
+    font-size: 0.72rem;
+  }
+
+  .paperlab-dashboard .execution-timeline strong {
+    color: var(--pl-text);
+    font-size: 0.9rem;
+  }
+
+  .paperlab-dashboard .plan-columns {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2rem;
+    margin-top: 1.25rem;
+  }
+
+  .paperlab-dashboard .plan-columns h4 {
+    margin-bottom: 0.6rem;
+    color: var(--pl-text);
+    font-size: 0.82rem;
+    letter-spacing: 0;
+  }
+
+  .paperlab-dashboard .rule-list > div,
+  .paperlab-dashboard .parameter-list > div {
+    display: grid;
+    grid-template-columns: minmax(6.5rem, 0.75fr) minmax(0, 1.25fr);
+    gap: 1rem;
+    padding: 0.55rem 0;
+    border-top: 1px solid var(--pl-border);
+  }
+
+  .paperlab-dashboard .rule-list dd {
+    color: var(--pl-text);
+    font-size: 0.75rem;
+    text-align: right;
+    overflow-wrap: anywhere;
+  }
+
+  .paperlab-dashboard .plan-quality {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    margin-top: 1.25rem !important;
+    padding: 0.8rem 1rem;
+    border-left: 3px solid var(--pl-warning);
+    background: var(--pl-surface-raised);
+  }
+
+  .paperlab-dashboard .plan-quality strong {
+    flex: 0 0 auto;
+    color: var(--pl-warning);
+    font-size: 0.78rem;
+  }
+
+  .paperlab-dashboard .plan-quality span {
+    color: var(--pl-muted);
+    font-size: 0.75rem;
+  }
+
+  .paperlab-dashboard .strategy-section {
+    margin-top: 2.5rem;
+    padding-top: 2rem;
+    border-top: 2px solid var(--pl-border-strong);
+  }
+
+  .paperlab-dashboard .strategy-heading {
+    margin-bottom: 1.25rem;
+  }
+
+  .paperlab-dashboard .strategy-context {
+    padding: 0.8rem 0;
+    border-top: 1px solid var(--pl-border);
+    border-bottom: 1px solid var(--pl-border);
+  }
+
+  .paperlab-dashboard .strategy-context dl {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .paperlab-dashboard .allocation-cell {
+    width: 28%;
+  }
+
+  .paperlab-dashboard .allocation-track {
+    width: 100%;
+    height: 0.4rem;
+    overflow: hidden;
+    border-radius: 2px;
+    background: var(--pl-surface-raised);
+  }
+
+  .paperlab-dashboard .allocation-track span {
+    display: block;
+    width: var(--allocation);
+    height: 100%;
+    background: var(--pl-positive);
+  }
+
+  .paperlab-dashboard .validation-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.8rem;
+    padding: 1.75rem 0;
+    border-top: 1px solid var(--pl-border);
+  }
+
+  .paperlab-dashboard .validation-panel {
+    min-width: 0;
+    padding: 1rem;
+    border: 1px solid var(--pl-border);
+    border-radius: 6px;
+    background: var(--pl-surface);
+  }
+
+  .paperlab-dashboard .validation-panel header > div > p:last-child {
+    margin-top: 0.2rem;
+  }
+
+  .paperlab-dashboard .validation-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin-top: 1rem;
+    border-top: 1px solid var(--pl-border);
+  }
+
+  .paperlab-dashboard .validation-metrics > div {
+    min-width: 0;
+    padding: 0.65rem 0.55rem 0.45rem 0;
+  }
+
+  .paperlab-dashboard .validation-metrics dt {
+    color: var(--pl-muted);
+    font-size: 0.68rem;
+  }
+
+  .paperlab-dashboard .validation-metrics dd {
+    margin-top: 0.25rem;
+    color: var(--pl-text);
+    font-size: 0.95rem;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+  }
+
+  .paperlab-dashboard .validation-note {
+    margin-top: 0.75rem !important;
+    padding-top: 0.65rem;
+    border-top: 1px solid var(--pl-border);
+  }
+
+  .paperlab-dashboard .strategy-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2rem;
+  }
+
+  .paperlab-dashboard .parameter-list dd {
+    text-align: right;
+  }
+
+  .paperlab-dashboard .gate-list {
+    display: grid;
+    gap: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .paperlab-dashboard .gate-list li {
+    position: relative;
+    padding: 0.58rem 0 0.58rem 1rem;
+    border-top: 1px solid var(--pl-border);
+    color: var(--pl-text);
+    font-size: 0.75rem;
+  }
+
+  .paperlab-dashboard .gate-list li::before {
+    position: absolute;
+    top: 0.9rem;
+    left: 0;
+    width: 0.4rem;
+    height: 0.4rem;
+    border-radius: 50%;
+    background: var(--pl-negative);
+    content: "";
+  }
+
+  .paperlab-dashboard .data-quality {
+    display: grid;
+    grid-template-columns: minmax(13rem, 0.8fr) minmax(0, 2.2fr);
+    gap: 2rem;
+    margin-top: 1rem;
+    padding: 1.25rem 0 2.5rem;
+    border-top: 2px solid var(--pl-border-strong);
+  }
+
+  .paperlab-dashboard .data-quality > div > strong,
+  .paperlab-dashboard .data-quality > div > span {
+    display: block;
+  }
+
+  .paperlab-dashboard .data-quality > div > strong {
+    margin-top: 0.3rem;
+    color: var(--pl-text);
+    font-size: 0.95rem;
+  }
+
+  .paperlab-dashboard .data-quality > div > span {
+    margin-top: 0.35rem;
+    color: var(--pl-muted);
+    font-size: 0.75rem;
+    line-height: 1.55;
+  }
+
+  .paperlab-dashboard .data-quality-detail > dl {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .paperlab-dashboard .quality-warnings {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0;
+    margin-top: 1rem !important;
+    padding: 0;
+    border-top: 1px solid var(--pl-border);
+    list-style: none;
+  }
+
+  .paperlab-dashboard .quality-warnings li {
+    padding: 0.5rem 0.75rem 0.5rem 0;
+    border-bottom: 1px solid var(--pl-border);
+    color: var(--pl-muted);
+    font-size: 0.7rem;
+    line-height: 1.45;
+  }
+
+  .paperlab-dashboard .quality-warnings li:nth-child(even) {
+    padding-right: 0;
+    padding-left: 0.75rem;
+    border-left: 1px solid var(--pl-border);
+  }
+
+  .paperlab-dashboard .dashboard-disclaimer {
+    display: grid;
+    grid-template-columns: minmax(5rem, auto) minmax(0, 1fr);
+    gap: 1rem;
+    padding: 1rem 0 2.5rem;
+    border-top: 1px solid var(--pl-border);
+  }
+
+  .paperlab-dashboard .dashboard-disclaimer strong {
+    color: var(--pl-warning);
+    font-size: 0.75rem;
+  }
+
+  .paperlab-dashboard .dashboard-disclaimer p {
+    color: var(--pl-muted);
+    font-size: 0.75rem;
+    line-height: 1.6;
+  }
+
+  @media (max-width: 68rem) {
+    .paperlab-dashboard .kpi-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 48rem) {
+    .paperlab-dashboard .dashboard-header,
+    .paperlab-dashboard .data-quality {
+      align-items: start;
+      grid-template-columns: 1fr;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .paperlab-dashboard .dashboard-meta,
+    .paperlab-dashboard .data-quality-detail > dl {
+      width: 100%;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .paperlab-dashboard .account-switcher {
+      display: grid;
+      width: 100%;
+      grid-auto-flow: row;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .paperlab-dashboard .candidate-line {
+      grid-template-columns: 1fr;
+    }
+
+    .paperlab-dashboard .strategy-context dl,
+    .paperlab-dashboard .candidate-line dl {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .paperlab-dashboard .validation-grid,
+    .paperlab-dashboard .strategy-detail-grid,
+    .paperlab-dashboard .plan-columns {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 34rem) {
+    .paperlab-dashboard .dashboard-header {
+      padding-top: 1.75rem;
+    }
+
+    .paperlab-dashboard .account-heading,
+    .paperlab-dashboard .strategy-heading,
+    .paperlab-dashboard .section-heading,
+    .paperlab-dashboard .validation-panel > header {
+      align-items: start;
+      flex-direction: column;
+    }
+
+    .paperlab-dashboard .kpi-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .paperlab-dashboard .kpi dd {
+      font-size: 1rem;
+    }
+
+    .paperlab-dashboard .execution-timeline {
+      grid-template-columns: 1fr;
+    }
+
+    .paperlab-dashboard .execution-timeline li + li {
+      border-left: 0;
+      border-top: 0;
+    }
+
+    .paperlab-dashboard .candidate-line dl,
+    .paperlab-dashboard .strategy-context dl,
+    .paperlab-dashboard .data-quality-detail > dl {
+      grid-template-columns: 1fr;
+    }
+
+    .paperlab-dashboard .quality-warnings {
+      grid-template-columns: 1fr;
+    }
+
+    .paperlab-dashboard .quality-warnings li:nth-child(even) {
+      padding-left: 0;
+      border-left: 0;
+    }
+
+    .paperlab-dashboard .dashboard-disclaimer {
+      grid-template-columns: 1fr;
+      gap: 0.35rem;
+    }
+
+    .paperlab-dashboard .validation-metrics {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .paperlab-dashboard .plan-quality {
+      align-items: start;
+      flex-direction: column;
+    }
+  }
+
+  @media (max-width: 24rem) {
+    .paperlab-dashboard .account-switcher,
+    .paperlab-dashboard .kpi-grid,
+    .paperlab-dashboard .dashboard-meta {
+      grid-template-columns: 1fr;
+    }
+
+    .paperlab-dashboard .rule-list > div,
+    .paperlab-dashboard .parameter-list > div {
+      grid-template-columns: 1fr;
+      gap: 0.25rem;
+    }
+
+    .paperlab-dashboard .rule-list dd,
+    .paperlab-dashboard .parameter-list dd {
+      text-align: left;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .paperlab-dashboard *,
+    .paperlab-dashboard *::before,
+    .paperlab-dashboard *::after {
+      scroll-behavior: auto !important;
+      transition: none !important;
+    }
+  }

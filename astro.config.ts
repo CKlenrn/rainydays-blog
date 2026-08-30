@@ -24,6 +24,10 @@ export default defineConfig({
           label: "知识库首页",
           link: siteConfig.paths.notes,
         },
+        {
+          label: "模拟盘",
+          link: siteConfig.paths.paperlab,
+        },
         ...siteConfig.topics.map((topic) => ({
           label: topic.title,
           items: [{ autogenerate: { directory: topic.directory } }],
