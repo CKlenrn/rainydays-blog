@@ -2,51 +2,75 @@
   "accounts": [
     {
       "capital": 1000000.0,
-      "cash": 1000000.0,
-      "drawdown": 0.0,
-      "equity": 1000000.0,
+      "cash": 738567.682176505,
+      "drawdown": -4.1417823494982464e-05,
+      "equity": 999958.582176505,
       "equityCurve": [
         {
           "date": "2026-08-28",
           "drawdown": 0.0,
           "equity": 1000000.0
+        },
+        {
+          "date": "2026-08-31",
+          "drawdown": -4.1417823494982464e-05,
+          "equity": 999958.582176505
         }
       ],
-      "fillCount": 0,
+      "fillCount": 2,
       "halted": false,
       "id": "paper-local",
       "label": "主策略模拟盘",
-      "lastMarkDate": "2026-08-28",
-      "marketValue": 0,
-      "pendingOrderCount": 2,
-      "pendingOrders": [
+      "lastMarkDate": "2026-08-31",
+      "marketValue": 261390.90000000002,
+      "pendingOrderCount": 0,
+      "pendingOrders": [],
+      "positionCount": 2,
+      "positions": [
         {
-          "executeOn": "next_available_market_open",
+          "averageCost": 0.3402720510000001,
+          "lastPrice": 0.339,
+          "marketValue": 118514.40000000001,
           "name": "医疗ETF",
           "quantity": 349600,
-          "referencePrice": 0.342,
-          "side": "buy",
-          "signalDate": "2026-08-28",
-          "status": "planned",
           "symbol": "512170",
-          "targetWeight": 0.119579
+          "unrealizedPnl": -444.7090296000181,
+          "weight": 0.11851930881181312
         },
         {
-          "executeOn": "next_available_market_open",
+          "averageCost": 1.10188096515,
+          "lastPrice": 1.105,
+          "marketValue": 142876.5,
           "name": "证券ETF",
           "quantity": 129300,
-          "referencePrice": 1.104,
-          "side": "buy",
-          "signalDate": "2026-08-28",
-          "status": "planned",
           "symbol": "512880",
-          "targetWeight": 0.142857
+          "unrealizedPnl": 403.2912061050117,
+          "weight": 0.14288241787876424
         }
       ],
-      "positionCount": 0,
-      "positions": [],
-      "recentFills": [],
-      "totalReturn": 0.0
+      "recentFills": [
+        {
+          "amount": 118923.43200000002,
+          "fee": 35.677029600000004,
+          "name": "医疗ETF",
+          "price": 0.34017000000000003,
+          "quantity": 349600,
+          "side": "buy",
+          "symbol": "512170",
+          "time": "2026-08-31T09:30:00+08:00"
+        },
+        {
+          "amount": 142430.47965,
+          "fee": 42.72914389499999,
+          "name": "证券ETF",
+          "price": 1.1015504999999999,
+          "quantity": 129300,
+          "side": "buy",
+          "symbol": "512880",
+          "time": "2026-08-31T09:30:00+08:00"
+        }
+      ],
+      "totalReturn": -4.1417823494982464e-05
     },
     {
       "capital": 2000.0,
@@ -102,7 +126,7 @@
   ],
   "dataStatus": {
     "label": "数据可用但存在提示",
-    "sourceSummary": "10/10 个标的更新至 2026-08-28，9 个来自本地缓存",
+    "sourceSummary": "10/10 个标的更新至 2026-08-31，9 个来自本地缓存",
     "status": "warning",
     "warnings": [
       "已从策略研究排除：512690",
@@ -114,8 +138,8 @@
     ]
   },
   "disclaimer": "仅展示本地模拟交易与历史研究结果，不连接实盘券商，不构成投资建议；历史回测和样本外验证不代表未来收益。",
-  "generatedAt": "2026-08-31T17:08:12+08:00",
-  "marketDate": "2026-08-28",
+  "generatedAt": "2026-08-31T17:15:54+08:00",
+  "marketDate": "2026-08-31",
   "schemaVersion": 1,
   "strategy": {
     "backtest": {
@@ -8149,14 +8173,19 @@
           "date": "2026-08-28",
           "drawdown": -0.04429617581849343,
           "equity": 964141.23429022
+        },
+        {
+          "date": "2026-08-31",
+          "drawdown": -0.04429617581849343,
+          "equity": 964141.23429022
         }
       ],
       "halted": true,
       "label": "全样本回测（包含样本内区间）",
       "maxDrawdown": -0.08084774080873403,
-      "period": "2020-01-14 - 2026-08-28",
+      "period": "2020-01-14 - 2026-08-31",
       "profitFactor": 0.08534218437398676,
-      "sharpe": -0.18472319517275412,
+      "sharpe": -0.1846657039362138,
       "totalReturn": -0.03585876570978008,
       "tradeCount": 8,
       "winRate": 0.25
@@ -8181,19 +8210,25 @@
       ]
     },
     "regime": "neutral",
-    "signalDate": "2026-08-28",
+    "signalDate": "2026-08-31",
     "targets": [
-      {
-        "name": "证券ETF",
-        "score": 77.7778,
-        "symbol": "512880",
-        "weight": 0.15
-      },
       {
         "name": "医疗ETF",
         "score": 65.8889,
         "symbol": "512170",
-        "weight": 0.119579
+        "weight": 0.108499
+      },
+      {
+        "name": "证券ETF",
+        "score": 77.7778,
+        "symbol": "512880",
+        "weight": 0.1
+      },
+      {
+        "name": "科创50ETF",
+        "score": 68.5556,
+        "symbol": "588000",
+        "weight": 0.091501
       }
     ],
     "version": "etf-rotation-v1.0.0",
