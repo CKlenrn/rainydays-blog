@@ -56,14 +56,14 @@
         "candidate": {
           "maximumLimitPrice": 0.85,
           "maximumNotional": 1955.0,
-          "name": "Chemical Industry ETF Penghua",
+          "name": "化工ETF鹏华",
           "quantity": 2300,
           "settlement": "T+1",
           "symbol": "159870"
         },
         "dataQuality": {
           "executionReady": false,
-          "reason": "The 2026-08-31 A-share session has not opened. The verified values are prior-session closing snapshots, not current executable quotes."
+          "reason": "entry decision expired at 10:15"
         },
         "decision": {
           "fillRecorded": false,
@@ -79,18 +79,18 @@
           "triggerFormula": "max(0.841, H15 + 0.001)"
         },
         "executionWindow": {
-          "entryFrom": "09:46:00+08:00",
-          "expiresAt": "10:15:00+08:00",
-          "observeFrom": "09:30:00+08:00"
+          "entryFrom": "09:46:00",
+          "expiresAt": "10:15:00",
+          "observeFrom": "09:30:00"
         },
         "exitPolicy": {
           "riskExit": "max(0.820, entry_price * 0.975)",
           "sameDayExitAllowed": false,
-          "takeProfit": "entry_price * 1.05",
-          "timeExit": "third trading day at 14:50"
+          "takeProfit": "entry_price * 1.050",
+          "timeExit": "trading day 3 at 14:50:00"
         },
         "marketDate": "2026-08-31",
-        "status": "awaiting_market_open"
+        "status": "no_trade"
       },
       "equity": 2000.0,
       "equityCurve": [],
@@ -123,7 +123,7 @@
     ]
   },
   "disclaimer": "仅展示本地模拟交易与历史研究结果，不连接实盘券商，不构成投资建议；历史回测和样本外验证不代表未来收益。",
-  "generatedAt": "2026-08-31T01:10:02+08:00",
+  "generatedAt": "2026-08-31T12:15:46+08:00",
   "marketDate": "2026-08-28",
   "schemaVersion": 1,
   "strategy": {
