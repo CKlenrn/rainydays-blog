@@ -53,17 +53,9 @@
       "cash": 2000.0,
       "drawdown": 0.0,
       "entryPlan": {
-        "candidate": {
-          "maximumLimitPrice": 0.85,
-          "maximumNotional": 1955.0,
-          "name": "化工ETF鹏华",
-          "quantity": 2300,
-          "settlement": "T+1",
-          "symbol": "159870"
-        },
         "dataQuality": {
           "executionReady": false,
-          "reason": "entry decision expired at 10:15"
+          "reason": "not_in_scan_session"
         },
         "decision": {
           "fillRecorded": false,
@@ -72,25 +64,25 @@
         "entryGate": {
           "aboveVwap": true,
           "benchmark": "510300",
-          "benchmarkMinimumChange": -0.8,
+          "benchmarkMinimumChange": -2.5,
           "maximumIopvPremium": 0.8,
-          "minimumHoldSeconds": 60,
-          "minimumTurnover": 64000000.0,
-          "triggerFormula": "max(0.841, H15 + 0.001)"
+          "minimumHoldSeconds": 30,
+          "minimumTurnover": 20000000.0,
+          "triggerFormula": "price >= previous 15 completed minutes high"
         },
         "executionWindow": {
-          "entryFrom": "09:46:00",
-          "expiresAt": "10:15:00",
-          "observeFrom": "09:30:00"
+          "entryFrom": "09:45:00",
+          "expiresAt": "14:20:00",
+          "observeFrom": "09:45:00"
         },
         "exitPolicy": {
-          "riskExit": "max(0.820, entry_price * 0.975)",
+          "riskExit": "entry_price * 0.975",
           "sameDayExitAllowed": false,
-          "takeProfit": "entry_price * 1.050",
-          "timeExit": "trading day 3 at 14:50:00"
+          "takeProfit": "entry_price * 1.040",
+          "timeExit": "trading day 2 at 14:45:00"
         },
         "marketDate": "2026-08-31",
-        "status": "no_trade"
+        "status": "outside_entry_window"
       },
       "equity": 2000.0,
       "equityCurve": [],
@@ -118,12 +110,11 @@
       "512690 数据标记：daily_move_over_15pct:7, extreme_daily_move_over_20pct:5",
       "588000 数据标记：daily_move_over_15pct:2",
       "异常数据源：512690=data_conflict",
-      "9 个标的本次使用本地缓存；未公开原始供应商错误信息。",
-      "micro-2000 的 159870 仍是研究计划且不在当前交易池，不是模拟挂单。"
+      "9 个标的本次使用本地缓存；未公开原始供应商错误信息。"
     ]
   },
   "disclaimer": "仅展示本地模拟交易与历史研究结果，不连接实盘券商，不构成投资建议；历史回测和样本外验证不代表未来收益。",
-  "generatedAt": "2026-08-31T12:15:46+08:00",
+  "generatedAt": "2026-08-31T17:08:12+08:00",
   "marketDate": "2026-08-28",
   "schemaVersion": 1,
   "strategy": {
