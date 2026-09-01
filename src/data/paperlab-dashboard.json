@@ -111,12 +111,98 @@
           "timeExit": "trading day 2 at 14:45:00"
         },
         "marketDate": "2026-09-01",
+        "routeEvaluations": [
+          {
+            "kind": "recent_high_breakout",
+            "minute": null,
+            "quote": null,
+            "routeId": "breakout"
+          },
+          {
+            "kind": "relative_strength_continuation",
+            "minute": null,
+            "quote": null,
+            "routeId": "relative_strength"
+          },
+          {
+            "kind": "vwap_reclaim_reversal",
+            "minute": null,
+            "quote": null,
+            "routeId": "mean_reversion"
+          }
+        ],
+        "routeEvidenceAvailable": false,
         "routeShadow": {
-          "effectiveStart": null,
-          "resolvedCount": null,
-          "routeCount": null,
-          "signalCount": null,
-          "status": "unavailable"
+          "diagnosticOnly": true,
+          "effectiveStart": "2026-09-02",
+          "historySemantics": "recomputed_from_current_digest_verified_reports",
+          "resolvedCount": 0,
+          "routeCount": 0,
+          "signalCount": 0,
+          "status": "awaiting_start"
+        },
+        "routeTournament": {
+          "coverageGapCount": 0,
+          "dataFailureCount": 0,
+          "effectiveStart": "2026-09-02",
+          "ledgerEntryCount": 0,
+          "maximumMarketDays": 40,
+          "observedMarketDays": 0,
+          "pendingResolutionCount": 0,
+          "primaryMetric": "average_next_session_0945_after_cost_pnl_cny",
+          "promotionEligible": false,
+          "routes": [
+            {
+              "averageAfterCostPnl": null,
+              "completeMarketDays": 0,
+              "kind": "recent_high_breakout",
+              "profitFactor": null,
+              "resolutionRate": null,
+              "resolvedCount": 0,
+              "routeId": "breakout",
+              "sampleGates": {
+                "completeMarketDays": false,
+                "resolutionRate": false,
+                "resolvedObservations": false
+              },
+              "signalCount": 0,
+              "status": "collecting"
+            },
+            {
+              "averageAfterCostPnl": null,
+              "completeMarketDays": 0,
+              "kind": "relative_strength_continuation",
+              "profitFactor": null,
+              "resolutionRate": null,
+              "resolvedCount": 0,
+              "routeId": "relative_strength",
+              "sampleGates": {
+                "completeMarketDays": false,
+                "resolutionRate": false,
+                "resolvedObservations": false
+              },
+              "signalCount": 0,
+              "status": "collecting"
+            },
+            {
+              "averageAfterCostPnl": null,
+              "completeMarketDays": 0,
+              "kind": "vwap_reclaim_reversal",
+              "profitFactor": null,
+              "resolutionRate": null,
+              "resolvedCount": 0,
+              "routeId": "mean_reversion",
+              "sampleGates": {
+                "completeMarketDays": false,
+                "resolutionRate": false,
+                "resolvedObservations": false
+              },
+              "signalCount": 0,
+              "status": "collecting"
+            }
+          ],
+          "status": "awaiting_start",
+          "tournamentId": "micro-route-tournament-v2"
         },
         "routes": [
           {
@@ -168,7 +254,7 @@
     ]
   },
   "disclaimer": "仅展示本地模拟交易与历史研究结果，不连接实盘券商，不构成投资建议；历史回测和样本外验证不代表未来收益。",
-  "generatedAt": "2026-09-01T23:28:52+08:00",
+  "generatedAt": "2026-09-02T00:14:59+08:00",
   "marketDate": "2026-09-01",
   "schemaVersion": 1,
   "strategy": {

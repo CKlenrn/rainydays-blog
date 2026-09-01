@@ -60,12 +60,54 @@ interface EntryPlan {
     kind: string;
     minScore: number;
   }>;
+  routeEvidenceAt?: string | null;
+  routeEvidenceAvailable?: boolean;
+  routeEvaluations?: Array<{
+    routeId: string;
+    kind: string;
+    quote: {
+      symbol: string;
+      eligible: boolean;
+      failedGates: string[];
+    } | null;
+    minute: {
+      symbol: string;
+      eligible: boolean;
+      reason: string | null;
+    } | null;
+  }>;
   routeShadow?: {
+    diagnosticOnly: boolean;
+    historySemantics: string | null;
     effectiveStart: string | null;
     status: string;
     signalCount: number | null;
     resolvedCount: number | null;
     routeCount: number | null;
+  };
+  routeTournament?: {
+    tournamentId: string;
+    effectiveStart: string;
+    status: string;
+    primaryMetric: string;
+    observedMarketDays: number;
+    maximumMarketDays: number;
+    pendingResolutionCount: number;
+    ledgerEntryCount: number;
+    coverageGapCount: number;
+    dataFailureCount: number;
+    promotionEligible: boolean;
+    routes: Array<{
+      routeId: string;
+      kind: string;
+      status: string;
+      signalCount: number;
+      resolvedCount: number;
+      completeMarketDays: number;
+      resolutionRate: number | null;
+      averageAfterCostPnl: number | null;
+      profitFactor: number | null;
+    }>;
   };
   candidate?: {
     symbol: string;
@@ -271,6 +313,46 @@ const routeShadowLabels: Record<string, string> = {
   insufficient_sample: "样本积累中",
   sufficient: "样本充足",
   unavailable: "日报不可用",
+};
+const routeTournamentLabels: Record<string, string> = {
+  awaiting_start: "等待起算",
+  collecting: "前瞻样本积累中",
+  resolving_final_observation: "解析最后一批样本",
+  eligible_for_manual_review: "可进入人工复核",
+  closed_insufficient_evidence: "观察期结束 · 证据不足",
+};
+const routeReasonLabels: Record<string, string> = {
+  benchmark_crisis_veto: "基准危机否决",
+  iopv_premium_above_maximum: "IOPV 溢价过高",
+  reward_does_not_cover_friction: "潜在收益不足以覆盖摩擦",
+  route_change_range: "涨跌幅不在路线区间",
+  route_relative_strength: "相对强度不足",
+  route_score: "路线评分不足",
+  route_vwap_strength: "VWAP 强度不足",
+  spread_above_maximum: "买卖价差过宽",
+  turnover_below_minimum: "成交额不足",
+  weak_market_relative_strength: "弱市相对强度不足",
+  below_recent_high_or_weak_close: "未突破近期高点或收盘位置偏弱",
+  continuation_pattern_failed: "相对强弱延续形态未确认",
+  vwap_reclaim_pattern_failed: "VWAP 收复反转形态未确认",
+  insufficient_recent_minutes: "完整分钟数不足",
+  minute_window_has_gap: "分钟窗口存在缺口",
+};
+const formatRouteReasons = (reasons: string[]) =>
+  reasons.length ? reasons.map((reason) => routeReasonLabels[reason] ?? reason).join("、") : "通过";
+type RouteEvaluation = NonNullable<EntryPlan["routeEvaluations"]>[number];
+const routeEvaluationMarker = (route: RouteEvaluation) => {
+  const quote = route.quote
+    ? route.quote.eligible
+      ? "passed"
+      : route.quote.failedGates.join(",") || "rejected_without_reason"
+    : "not_evaluated";
+  const minute = route.minute
+    ? route.minute.eligible
+      ? "passed"
+      : route.minute.reason || "rejected_without_reason"
+    : "not_evaluated";
+  return `${route.routeId}|quote:${quote}|minute:${minute}`;
 };
 const gateLabels: Record<string, string> = {
   all_fold_selections_eligible: "全部训练折参数合格",
@@ -616,7 +698,7 @@ const formatValidationPeriod = (period: ValidationMetrics["period"]) => {
                 </ol>
               )}
 
-              {((account.entryPlan.routes?.length ?? 0) > 0 || account.entryPlan.routeShadow) && (
+              {((account.entryPlan.routes?.length ?? 0) > 0 || account.entryPlan.routeShadow || account.entryPlan.routeTournament) && (
                 <div class="plan-columns">
                   {(account.entryPlan.routes?.length ?? 0) > 0 && (
                     <div>
@@ -632,17 +714,91 @@ const formatValidationPeriod = (period: ValidationMetrics["period"]) => {
                     </div>
                   )}
                   {account.entryPlan.routeShadow && (
-                    <div>
-                      <h4>前瞻路线跟踪</h4>
+                    <div
+                      data-route-diagnostic={String(account.entryPlan.routeShadow.diagnosticOnly)}
+                      data-history-semantics={account.entryPlan.routeShadow.historySemantics || "unavailable"}
+                    >
+                      <h4>非执行 Markout 诊断</h4>
                       <dl class="rule-list">
                         <div><dt>起算日</dt><dd>{account.entryPlan.routeShadow.effectiveStart || "—"}</dd></div>
                         <div><dt>状态</dt><dd>{routeShadowLabels[account.entryPlan.routeShadow.status] ?? account.entryPlan.routeShadow.status}</dd></div>
                         <div><dt>信号</dt><dd>{formatInteger(account.entryPlan.routeShadow.signalCount)}</dd></div>
                         <div><dt>已解析</dt><dd>{formatInteger(account.entryPlan.routeShadow.resolvedCount)}</dd></div>
-                        <div><dt>前瞻跟踪路线</dt><dd>{formatInteger(account.entryPlan.routeShadow.routeCount)}</dd></div>
+                        <div><dt>诊断路线</dt><dd>{formatInteger(account.entryPlan.routeShadow.routeCount)}</dd></div>
+                        <div><dt>用途</dt><dd>按当前验真报告可重算 · 不影响执行</dd></div>
                       </dl>
                     </div>
                   )}
+                  {account.entryPlan.routeTournament && (
+                    <div
+                      data-tournament-id={account.entryPlan.routeTournament.tournamentId}
+                      data-tournament-status={account.entryPlan.routeTournament.status}
+                    >
+                      <h4>固定前瞻路线竞赛</h4>
+                      <dl class="rule-list">
+                        <div><dt>竞赛</dt><dd>{account.entryPlan.routeTournament.tournamentId}</dd></div>
+                        <div><dt>起算日</dt><dd>{account.entryPlan.routeTournament.effectiveStart}</dd></div>
+                        <div><dt>状态</dt><dd>{routeTournamentLabels[account.entryPlan.routeTournament.status] ?? account.entryPlan.routeTournament.status}</dd></div>
+                        <div><dt>观察市场日</dt><dd>{formatInteger(account.entryPlan.routeTournament.observedMarketDays)} / {formatInteger(account.entryPlan.routeTournament.maximumMarketDays)}</dd></div>
+                        <div><dt>账本事件</dt><dd>{formatInteger(account.entryPlan.routeTournament.ledgerEntryCount)}</dd></div>
+                        <div><dt>覆盖缺口 / 数据失败</dt><dd>{formatInteger(account.entryPlan.routeTournament.coverageGapCount)} / {formatInteger(account.entryPlan.routeTournament.dataFailureCount)}</dd></div>
+                        <div><dt>自动晋级</dt><dd>{account.entryPlan.routeTournament.promotionEligible ? "允许" : "关闭，仅人工复核"}</dd></div>
+                        {account.entryPlan.routeTournament.routes.map((route) => (
+                          <div data-tournament-route={route.routeId}>
+                            <dt>{route.routeId}</dt>
+                            <dd>
+                              已解析 {formatInteger(route.resolvedCount)} / 信号 {formatInteger(route.signalCount)} ·
+                              完整日 {formatInteger(route.completeMarketDays)} · 解析率 {formatPercent(route.resolutionRate)} ·
+                              扣费后均值 {formatMoney(route.averageAfterCostPnl)} · PF {formatDecimal(route.profitFactor)}
+                            </dd>
+                          </div>
+                        ))}
+                      </dl>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {(account.entryPlan.routeEvaluations?.length ?? 0) > 0 && (
+                <div class="plan-columns">
+                  <div data-route-evidence-available={String(account.entryPlan.routeEvidenceAvailable === true)}>
+                    <h4>{account.entryPlan.routeEvidenceAvailable ? "最近一次逐路线闸门" : "逐路线闸门（尚无证据）"}</h4>
+                    <dl class="rule-list">
+                      {account.entryPlan.routeEvidenceAt && (
+                        <div><dt>证据时间</dt><dd>{formatDateTime(account.entryPlan.routeEvidenceAt)}</dd></div>
+                      )}
+                      {account.entryPlan.routeEvaluations?.map((route) => (
+                        <div
+                          data-route-evaluation={route.routeId}
+                          data-route-evaluation-state={routeEvaluationMarker(route)}
+                        >
+                          <dt>{route.routeId}</dt>
+                          <dd>
+                            报价 {route.quote?.symbol || "—"}：
+                            <span data-route-reasons={route.quote ? route.quote.eligible ? "passed" : route.quote.failedGates.join(",") || "rejected_without_reason" : "not_evaluated"}>
+                              {route.quote
+                                ? route.quote.eligible
+                                  ? "通过"
+                                  : route.quote.failedGates.length
+                                    ? formatRouteReasons(route.quote.failedGates)
+                                    : "拒绝原因未记录"
+                                : "尚无报价证据"}
+                            </span>
+                            {" · "}分钟 {route.minute?.symbol || "—"}：
+                            <span data-minute-reason={route.minute ? route.minute.eligible ? "passed" : route.minute.reason || "rejected_without_reason" : "not_evaluated"}>
+                              {route.minute
+                                ? route.minute.eligible
+                                  ? "通过"
+                                  : route.minute.reason
+                                    ? routeReasonLabels[route.minute.reason] ?? route.minute.reason
+                                    : "拒绝原因未记录"
+                                : "尚无分钟证据"}
+                            </span>
+                          </dd>
+                        </div>
+                      ))}
+                    </dl>
+                  </div>
                 </div>
               )}
 
