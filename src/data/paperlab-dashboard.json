@@ -79,7 +79,7 @@
       "entryPlan": {
         "dataQuality": {
           "executionReady": false,
-          "reason": "not_in_scan_session"
+          "reason": "no_ranked_candidate_passed_recent_breakout"
         },
         "decision": {
           "fillRecorded": false,
@@ -105,8 +105,8 @@
           "takeProfit": "entry_price * 1.040",
           "timeExit": "trading day 2 at 14:45:00"
         },
-        "marketDate": "2026-08-31",
-        "status": "outside_entry_window"
+        "marketDate": "2026-09-01",
+        "status": "no_trade"
       },
       "equity": 2000.0,
       "equityCurve": [],
@@ -126,19 +126,18 @@
   ],
   "dataStatus": {
     "label": "数据可用但存在提示",
-    "sourceSummary": "10/10 个标的更新至 2026-08-31，9 个来自本地缓存",
+    "sourceSummary": "9/10 个标的更新至 2026-08-31",
     "status": "warning",
     "warnings": [
       "已从策略研究排除：512690",
       "159915 数据标记：daily_move_over_15pct:3",
       "512690 数据标记：daily_move_over_15pct:7, extreme_daily_move_over_20pct:5",
       "588000 数据标记：daily_move_over_15pct:2",
-      "异常数据源：512690=data_conflict",
-      "9 个标的本次使用本地缓存；未公开原始供应商错误信息。"
+      "异常数据源：159915=fallback_used, 510300=fallback_used, 510500=fallback_used, 512100=fallback_used, 512170=fallback_used, 512480=fallback_used, 512690=data_conflict, 512880=fallback_used, 515030=fallback_used, 588000=fallback_used"
     ]
   },
   "disclaimer": "仅展示本地模拟交易与历史研究结果，不连接实盘券商，不构成投资建议；历史回测和样本外验证不代表未来收益。",
-  "generatedAt": "2026-08-31T17:15:54+08:00",
+  "generatedAt": "2026-09-01T16:23:17+08:00",
   "marketDate": "2026-08-31",
   "schemaVersion": 1,
   "strategy": {
