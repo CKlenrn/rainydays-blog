@@ -109,6 +109,32 @@ interface EntryPlan {
       profitFactor: number | null;
     }>;
   };
+  netedgeShadow?: {
+    strategyId: string;
+    effectiveStartAt: string | null;
+    latestCheckpoint: string | null;
+    status: string;
+    ledgerEntryCount: number;
+    signalCount: number;
+    resolvedCount: number;
+    unresolvedCount: number;
+    markoutCount: number;
+    maximumCostFraction: number | null;
+    stopCostMultiple: number | null;
+    targetCostMultiple: number | null;
+    forcedExitAt: string | null;
+    validationStatus: string;
+    integrityVerified: boolean;
+    automaticExecution: boolean;
+    automaticPromotion: boolean;
+    latestSignal: {
+      symbol: string | null;
+      costFraction: number | null;
+      plannedStopPrice: number | null;
+      plannedTargetPrice: number | null;
+    } | null;
+    latestResolutionNetPnl: number | null;
+  };
   parameterTournament?: {
     tournamentId: string;
     effectiveStart: string;
@@ -380,7 +406,8 @@ const formatPercentPoints = (value: number | null | undefined) =>
   typeof value === "number" && Number.isFinite(value) ? `${value.toFixed(2)}%` : "—";
 const formatDate = (value: string | null | undefined) => value?.slice(0, 10) || "尚未记账";
 const formatPlanTime = (value: string | null | undefined) => value?.slice(0, 5) || "—";
-const formatDateTime = (value: string) => dateTimeFormatter.format(new Date(value));
+const formatDateTime = (value: string | null | undefined) =>
+  value ? dateTimeFormatter.format(new Date(value)) : "—";
 const toneFor = (value: number | null | undefined) =>
   typeof value !== "number" || value === 0 ? "neutral" : value > 0 ? "positive" : "negative";
 
@@ -424,6 +451,17 @@ const routeTournamentLabels: Record<string, string> = {
   eligible_for_manual_review: "可进入人工复核",
   closed_insufficient_evidence: "观察期结束 · 证据不足",
   degraded: "数据降级",
+};
+const netedgeStatusLabels: Record<string, string> = {
+  awaiting_start: "等待今日盘中起算",
+  market_closed: "非交易日",
+  outside_entry_window: "当前不在采样窗口",
+  daily_limit: "今日信号额度已用完",
+  no_signal: "本检查点无净优势信号",
+  signal_recorded: "已记录研究信号",
+  monitoring: "研究信号观察中",
+  resolved: "研究信号已因果解析",
+  unresolved: "证据缺口 · 不计收益",
 };
 const parameterRouteLabels: Record<string, string> = {
   breakout: "突破",
@@ -824,7 +862,7 @@ const formatValidationPeriod = (period: ValidationMetrics["period"]) => {
                 </ol>
               )}
 
-              {((account.entryPlan.routes?.length ?? 0) > 0 || account.entryPlan.routeShadow || account.entryPlan.routeTournament || account.entryPlan.parameterTournament) && (
+              {((account.entryPlan.routes?.length ?? 0) > 0 || account.entryPlan.routeShadow || account.entryPlan.routeTournament || account.entryPlan.netedgeShadow || account.entryPlan.parameterTournament) && (
                 <div class="plan-columns">
                   {(account.entryPlan.routes?.length ?? 0) > 0 && (
                     <div>
@@ -879,6 +917,34 @@ const formatValidationPeriod = (period: ValidationMetrics["period"]) => {
                             </dd>
                           </div>
                         ))}
+                      </dl>
+                    </div>
+                  )}
+                  {account.entryPlan.netedgeShadow && (
+                    <div
+                      data-netedge-strategy={account.entryPlan.netedgeShadow.strategyId}
+                      data-netedge-status={account.entryPlan.netedgeShadow.status}
+                      data-netedge-integrity={String(account.entryPlan.netedgeShadow.integrityVerified)}
+                      data-netedge-automatic-execution={String(account.entryPlan.netedgeShadow.automaticExecution)}
+                      data-netedge-automatic-promotion={String(account.entryPlan.netedgeShadow.automaticPromotion)}
+                    >
+                      <h4>T+0 净优势前瞻影子</h4>
+                      <dl class="rule-list">
+                        <div><dt>版本</dt><dd>{account.entryPlan.netedgeShadow.strategyId}</dd></div>
+                        <div><dt>起算 / 最近检查</dt><dd>{formatDateTime(account.entryPlan.netedgeShadow.effectiveStartAt)} / {formatDateTime(account.entryPlan.netedgeShadow.latestCheckpoint)}</dd></div>
+                        <div><dt>状态</dt><dd>{netedgeStatusLabels[account.entryPlan.netedgeShadow.status] ?? account.entryPlan.netedgeShadow.status}</dd></div>
+                        <div><dt>信号 / 已解析 / 未解析</dt><dd>{formatInteger(account.entryPlan.netedgeShadow.signalCount)} / {formatInteger(account.entryPlan.netedgeShadow.resolvedCount)} / {formatInteger(account.entryPlan.netedgeShadow.unresolvedCount)}</dd></div>
+                        <div><dt>账本 / Markout</dt><dd>{formatInteger(account.entryPlan.netedgeShadow.ledgerEntryCount)} / {formatInteger(account.entryPlan.netedgeShadow.markoutCount)}</dd></div>
+                        <div><dt>成本门</dt><dd>C ≤ {formatPercent(account.entryPlan.netedgeShadow.maximumCostFraction)} · RS ≥ C · 5分钟回报 ≥ 0.5C</dd></div>
+                        <div><dt>出口</dt><dd>{formatDecimal(account.entryPlan.netedgeShadow.stopCostMultiple)}C 止损 · {formatDecimal(account.entryPlan.netedgeShadow.targetCostMultiple)}C 止盈 · {formatPlanTime(account.entryPlan.netedgeShadow.forcedExitAt)}</dd></div>
+                        <div><dt>统计状态</dt><dd>{account.entryPlan.netedgeShadow.validationStatus === "not_evaluable_missing_causal_intraday_history" ? "缺历史因果盘口，暂不可评价" : account.entryPlan.netedgeShadow.validationStatus}</dd></div>
+                        <div><dt>执行与晋级</dt><dd>{account.entryPlan.netedgeShadow.automaticExecution || account.entryPlan.netedgeShadow.automaticPromotion ? "异常：安全开关开启" : "仅研究 · 不下单 · 不自动晋级"}</dd></div>
+                        {account.entryPlan.netedgeShadow.latestSignal && (
+                          <div><dt>最近研究信号</dt><dd>{account.entryPlan.netedgeShadow.latestSignal.symbol || "—"} · C {formatPercent(account.entryPlan.netedgeShadow.latestSignal.costFraction)} · 止损/止盈 {formatPrice(account.entryPlan.netedgeShadow.latestSignal.plannedStopPrice)} / {formatPrice(account.entryPlan.netedgeShadow.latestSignal.plannedTargetPrice)}</dd></div>
+                        )}
+                        {account.entryPlan.netedgeShadow.latestResolutionNetPnl !== null && (
+                          <div><dt>最近解析净收益</dt><dd>{formatMoney(account.entryPlan.netedgeShadow.latestResolutionNetPnl)}</dd></div>
+                        )}
                       </dl>
                     </div>
                   )}
