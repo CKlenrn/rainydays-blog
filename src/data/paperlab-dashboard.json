@@ -322,7 +322,7 @@
     ]
   },
   "disclaimer": "仅展示本地模拟交易与历史研究结果，不连接实盘券商，不构成投资建议；历史回测和样本外验证不代表未来收益。",
-  "generatedAt": "2026-09-02T02:25:32+08:00",
+  "generatedAt": "2026-09-02T04:34:58+08:00",
   "marketDate": "2026-09-01",
   "schemaVersion": 1,
   "strategy": {
@@ -8389,6 +8389,10 @@
       "oos_sharpe",
       "unvalidated_sessions"
     ],
+    "historicalValidationScope": {
+      "accountId": "paper-local",
+      "controlsMicroAccounts": false
+    },
     "liveGatePassed": false,
     "parameters": {
       "minimum_score": 55.0,
@@ -8396,6 +8400,85 @@
         20,
         60,
         120
+      ]
+    },
+    "prospectiveScoreboard": {
+      "commonCompleteMarketDays": 0,
+      "coverageGapCount": 0,
+      "descriptiveRanking": null,
+      "effectiveStart": "2026-09-03",
+      "ledgerEntryCount": 0,
+      "promotionEligible": false,
+      "rankingAllowed": false,
+      "scoreboardId": "micro-unified-oos-v1",
+      "sealedDayCount": 0,
+      "status": "awaiting_start",
+      "variants": [
+        {
+          "compoundedCommonDayReturn": null,
+          "maximumDrawdown": null,
+          "meanCommonDayReturn": null,
+          "resolutionRate": null,
+          "resolvedDayCount": 0,
+          "resolvedObservationCount": 0,
+          "reviewGatesPassed": false,
+          "source": "t_plus_one",
+          "sourceVariant": "breakout",
+          "status": "collecting",
+          "variantId": "t1_breakout"
+        },
+        {
+          "compoundedCommonDayReturn": null,
+          "maximumDrawdown": null,
+          "meanCommonDayReturn": null,
+          "resolutionRate": null,
+          "resolvedDayCount": 0,
+          "resolvedObservationCount": 0,
+          "reviewGatesPassed": false,
+          "source": "t_plus_one",
+          "sourceVariant": "relative_strength",
+          "status": "collecting",
+          "variantId": "t1_relative_strength"
+        },
+        {
+          "compoundedCommonDayReturn": null,
+          "maximumDrawdown": null,
+          "meanCommonDayReturn": null,
+          "resolutionRate": null,
+          "resolvedDayCount": 0,
+          "resolvedObservationCount": 0,
+          "reviewGatesPassed": false,
+          "source": "t_plus_one",
+          "sourceVariant": "mean_reversion",
+          "status": "collecting",
+          "variantId": "t1_mean_reversion"
+        },
+        {
+          "compoundedCommonDayReturn": null,
+          "maximumDrawdown": null,
+          "meanCommonDayReturn": null,
+          "resolutionRate": null,
+          "resolvedDayCount": 0,
+          "resolvedObservationCount": 0,
+          "reviewGatesPassed": false,
+          "source": "t_zero",
+          "sourceVariant": "actual_single_account",
+          "status": "collecting",
+          "variantId": "t0_composite"
+        },
+        {
+          "compoundedCommonDayReturn": null,
+          "maximumDrawdown": null,
+          "meanCommonDayReturn": null,
+          "resolutionRate": null,
+          "resolvedDayCount": 0,
+          "resolvedObservationCount": 0,
+          "reviewGatesPassed": false,
+          "source": "theme_satellite",
+          "sourceVariant": "next_session_0945",
+          "status": "collecting",
+          "variantId": "theme_159030_next_session"
+        }
       ]
     },
     "regime": "neutral",
