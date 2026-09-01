@@ -54,6 +54,19 @@ interface EquityPoint {
 
 interface EntryPlan {
   status: string;
+  strategyVersion?: string | null;
+  routes?: Array<{
+    modeId: string;
+    kind: string;
+    minScore: number;
+  }>;
+  routeShadow?: {
+    effectiveStart: string | null;
+    status: string;
+    signalCount: number | null;
+    resolvedCount: number | null;
+    routeCount: number | null;
+  };
   candidate?: {
     symbol: string;
     name?: string;
@@ -252,6 +265,12 @@ const deploymentLabels: Record<string, string> = {
   experimental_not_live_eligible: "实验中 · 未通过实盘门槛",
   paper_only: "仅模拟盘",
   live_eligible: "通过实盘门槛",
+};
+const routeShadowLabels: Record<string, string> = {
+  awaiting_start: "等待起算",
+  insufficient_sample: "样本积累中",
+  sufficient: "样本充足",
+  unavailable: "日报不可用",
 };
 const gateLabels: Record<string, string> = {
   all_fold_selections_eligible: "全部训练折参数合格",
@@ -564,7 +583,9 @@ const formatValidationPeriod = (period: ValidationMetrics["period"]) => {
             <section class="workspace-section entry-plan" aria-labelledby={`entry-plan-title-${account.id}`}>
               <header class="section-heading entry-plan-heading">
                 <div>
-                  <p class="section-label">CONDITIONAL PLAN</p>
+                  <p class="section-label">
+                    CONDITIONAL PLAN{account.entryPlan.strategyVersion && ` / ${account.entryPlan.strategyVersion}`}
+                  </p>
                   <h3 id={`entry-plan-title-${account.id}`}>盘中条件计划</h3>
                 </div>
                 <span class:list={["state-label", account.entryPlan.dataQuality?.executionReady ? "is-positive" : "is-warning"]}>
@@ -593,6 +614,36 @@ const formatValidationPeriod = (period: ValidationMetrics["period"]) => {
                   <li><span>允许入场</span><strong>{formatPlanTime(account.entryPlan.executionWindow.entryFrom)}</strong></li>
                   <li><span>计划失效</span><strong>{formatPlanTime(account.entryPlan.executionWindow.expiresAt)}</strong></li>
                 </ol>
+              )}
+
+              {((account.entryPlan.routes?.length ?? 0) > 0 || account.entryPlan.routeShadow) && (
+                <div class="plan-columns">
+                  {(account.entryPlan.routes?.length ?? 0) > 0 && (
+                    <div>
+                      <h4>盘中三路线</h4>
+                      <dl class="rule-list">
+                        {account.entryPlan.routes?.map((route) => (
+                          <div>
+                            <dt>{route.modeId}</dt>
+                            <dd>{route.kind} · 最低 {formatDecimal(route.minScore)} 分</dd>
+                          </div>
+                        ))}
+                      </dl>
+                    </div>
+                  )}
+                  {account.entryPlan.routeShadow && (
+                    <div>
+                      <h4>前瞻路线跟踪</h4>
+                      <dl class="rule-list">
+                        <div><dt>起算日</dt><dd>{account.entryPlan.routeShadow.effectiveStart || "—"}</dd></div>
+                        <div><dt>状态</dt><dd>{routeShadowLabels[account.entryPlan.routeShadow.status] ?? account.entryPlan.routeShadow.status}</dd></div>
+                        <div><dt>信号</dt><dd>{formatInteger(account.entryPlan.routeShadow.signalCount)}</dd></div>
+                        <div><dt>已解析</dt><dd>{formatInteger(account.entryPlan.routeShadow.resolvedCount)}</dd></div>
+                        <div><dt>前瞻跟踪路线</dt><dd>{formatInteger(account.entryPlan.routeShadow.routeCount)}</dd></div>
+                      </dl>
+                    </div>
+                  )}
+                </div>
               )}
 
               {account.entryPlan.entryGate && (
