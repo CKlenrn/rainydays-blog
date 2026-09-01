@@ -109,6 +109,61 @@ interface EntryPlan {
       profitFactor: number | null;
     }>;
   };
+  parameterTournament?: {
+    tournamentId: string;
+    effectiveStart: string;
+    marketDate: string;
+    status: string;
+    primaryMetric: string;
+    completeMarketDays: number;
+    ledgerEntryCount: number;
+    coverageGapCount: number;
+    sourceFailureCount: number;
+    automaticExecutionImpact: boolean;
+    automaticSelection: boolean;
+    automaticPromotion: boolean;
+    manualReviewReadyCount: number;
+    evaluationPolicy: {
+      minimumClosedTradesForInterim: number;
+      minimumClosedTradesForManualReview: number;
+      minimumCompleteDaysForInterim: number;
+      minimumCompleteDaysForManualReview: number;
+      minimumResolutionRate: number;
+      familySize: number;
+      walkForward: {
+        minimumFolds: number;
+        minimumTrainDays: number;
+        testDays: number;
+        purgeDays: number;
+        embargoDays: number;
+      };
+    };
+    variants: Array<{
+      variantId: string;
+      routeId: string;
+      tier: string;
+      accountStatus: string;
+      cash: number;
+      terminalEquity: number | null;
+      hasOpenPosition: boolean;
+      closedTrades: number;
+      wins: number;
+      losses: number;
+      expectedResolutions: number;
+      afterCostPnl: number;
+      afterCostReturnPct: number | null;
+      maximumDrawdownPct: number;
+      profitFactor: number | null;
+      resolutionRate: number | null;
+      interimDiagnosticsEligible: boolean;
+      manualReviewEligible: boolean;
+      walkForward: {
+        status: string;
+        observableFolds: number;
+        minimumFolds: number;
+      };
+    }>;
+  };
   candidate?: {
     symbol: string;
     name?: string;
@@ -368,6 +423,16 @@ const routeTournamentLabels: Record<string, string> = {
   resolving_final_observation: "解析最后一批样本",
   eligible_for_manual_review: "可进入人工复核",
   closed_insufficient_evidence: "观察期结束 · 证据不足",
+  degraded: "数据降级",
+};
+const parameterRouteLabels: Record<string, string> = {
+  breakout: "突破",
+  relative_strength: "相对强势",
+  mean_reversion: "均值回归",
+};
+const parameterTierLabels: Record<string, string> = {
+  baseline: "基线",
+  strict: "严格",
 };
 const prospectiveScoreboardLabels: Record<string, string> = {
   unavailable: "记分板不可用",
@@ -759,7 +824,7 @@ const formatValidationPeriod = (period: ValidationMetrics["period"]) => {
                 </ol>
               )}
 
-              {((account.entryPlan.routes?.length ?? 0) > 0 || account.entryPlan.routeShadow || account.entryPlan.routeTournament) && (
+              {((account.entryPlan.routes?.length ?? 0) > 0 || account.entryPlan.routeShadow || account.entryPlan.routeTournament || account.entryPlan.parameterTournament) && (
                 <div class="plan-columns">
                   {(account.entryPlan.routes?.length ?? 0) > 0 && (
                     <div>
@@ -811,6 +876,40 @@ const formatValidationPeriod = (period: ValidationMetrics["period"]) => {
                               已解析 {formatInteger(route.resolvedCount)} / 信号 {formatInteger(route.signalCount)} ·
                               完整日 {formatInteger(route.completeMarketDays)} · 解析率 {formatPercent(route.resolutionRate)} ·
                               扣费后均值 {formatMoney(route.averageAfterCostPnl)} · PF {formatDecimal(route.profitFactor)}
+                            </dd>
+                          </div>
+                        ))}
+                      </dl>
+                    </div>
+                  )}
+                  {account.entryPlan.parameterTournament && (
+                    <div
+                      data-parameter-tournament-id={account.entryPlan.parameterTournament.tournamentId}
+                      data-parameter-tournament-status={account.entryPlan.parameterTournament.status}
+                      data-parameter-execution-impact={String(account.entryPlan.parameterTournament.automaticExecutionImpact)}
+                      data-parameter-automatic-selection={String(account.entryPlan.parameterTournament.automaticSelection)}
+                      data-parameter-automatic-promotion={String(account.entryPlan.parameterTournament.automaticPromotion)}
+                    >
+                      <h4>六组参数影子赛马</h4>
+                      <dl class="rule-list">
+                        <div><dt>竞赛</dt><dd>{account.entryPlan.parameterTournament.tournamentId}</dd></div>
+                        <div><dt>数据日 / 起算日</dt><dd>{account.entryPlan.parameterTournament.marketDate} / {account.entryPlan.parameterTournament.effectiveStart}</dd></div>
+                        <div><dt>状态</dt><dd>{routeTournamentLabels[account.entryPlan.parameterTournament.status] ?? account.entryPlan.parameterTournament.status}</dd></div>
+                        <div><dt>完整市场日 / 账本事件</dt><dd>{formatInteger(account.entryPlan.parameterTournament.completeMarketDays)} / {formatInteger(account.entryPlan.parameterTournament.ledgerEntryCount)}</dd></div>
+                        <div><dt>覆盖缺口 / 来源失败</dt><dd>{formatInteger(account.entryPlan.parameterTournament.coverageGapCount)} / {formatInteger(account.entryPlan.parameterTournament.sourceFailureCount)}</dd></div>
+                        <div><dt>中期 / 人工复核门槛</dt><dd>{formatInteger(account.entryPlan.parameterTournament.evaluationPolicy.minimumCompleteDaysForInterim)}日、{formatInteger(account.entryPlan.parameterTournament.evaluationPolicy.minimumClosedTradesForInterim)}笔 / {formatInteger(account.entryPlan.parameterTournament.evaluationPolicy.minimumCompleteDaysForManualReview)}日、{formatInteger(account.entryPlan.parameterTournament.evaluationPolicy.minimumClosedTradesForManualReview)}笔</dd></div>
+                        <div><dt>滚动样本外</dt><dd>至少 {formatInteger(account.entryPlan.parameterTournament.evaluationPolicy.walkForward.minimumFolds)} 折 · 训练 {formatInteger(account.entryPlan.parameterTournament.evaluationPolicy.walkForward.minimumTrainDays)} 日 / 测试 {formatInteger(account.entryPlan.parameterTournament.evaluationPolicy.walkForward.testDays)} 日</dd></div>
+                        <div><dt>执行与晋级</dt><dd>{account.entryPlan.parameterTournament.automaticExecutionImpact || account.entryPlan.parameterTournament.automaticSelection || account.entryPlan.parameterTournament.automaticPromotion ? "异常：安全开关开启" : "不影响执行 · 不自动选优或晋级"}</dd></div>
+                        {account.entryPlan.parameterTournament.variants.map((variant) => (
+                          <div data-parameter-variant={variant.variantId}>
+                            <dt>{parameterRouteLabels[variant.routeId] ?? variant.routeId} · {parameterTierLabels[variant.tier] ?? variant.tier}</dt>
+                            <dd>
+                              {variant.hasOpenPosition ? `现金 ${formatMoney(variant.cash)} · 持仓待解析` : `期末权益 ${formatMoney(variant.terminalEquity)}`} ·
+                              扣费收益 {formatPercentPoints(variant.afterCostReturnPct)} ·
+                              闭合 {formatInteger(variant.closedTrades)} / 预期 {formatInteger(variant.expectedResolutions)} ·
+                              解析率 {formatPercent(variant.resolutionRate)} · PF {formatDecimal(variant.profitFactor)} ·
+                              最大回撤 {formatPercentPoints(variant.maximumDrawdownPct)} ·
+                              {variant.manualReviewEligible ? "可人工复核" : "未到人工复核门槛"}
                             </dd>
                           </div>
                         ))}
