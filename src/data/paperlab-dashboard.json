@@ -111,7 +111,32 @@
           "timeExit": "trading day 2 at 14:45:00"
         },
         "marketDate": "2026-09-01",
-        "status": "outside_entry_window"
+        "routeShadow": {
+          "effectiveStart": "2026-09-02",
+          "resolvedCount": 0,
+          "routeCount": 0,
+          "signalCount": 0,
+          "status": "awaiting_start"
+        },
+        "routes": [
+          {
+            "kind": "recent_high_breakout",
+            "minScore": 40.0,
+            "modeId": "breakout"
+          },
+          {
+            "kind": "relative_strength_continuation",
+            "minScore": 30.0,
+            "modeId": "relative_strength"
+          },
+          {
+            "kind": "vwap_reclaim_reversal",
+            "minScore": 10.0,
+            "modeId": "mean_reversion"
+          }
+        ],
+        "status": "outside_entry_window",
+        "strategyVersion": "micro-opportunity-v3.1.0"
       },
       "equity": 2000.0,
       "equityCurve": [],
@@ -143,7 +168,7 @@
     ]
   },
   "disclaimer": "仅展示本地模拟交易与历史研究结果，不连接实盘券商，不构成投资建议；历史回测和样本外验证不代表未来收益。",
-  "generatedAt": "2026-09-01T17:15:11+08:00",
+  "generatedAt": "2026-09-01T20:45:10+08:00",
   "marketDate": "2026-09-01",
   "schemaVersion": 1,
   "strategy": {
