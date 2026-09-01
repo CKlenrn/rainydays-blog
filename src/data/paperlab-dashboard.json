@@ -111,6 +111,188 @@
           "timeExit": "trading day 2 at 14:45:00"
         },
         "marketDate": "2026-09-02",
+        "parameterTournament": {
+          "automaticExecutionImpact": false,
+          "automaticPromotion": false,
+          "automaticSelection": false,
+          "completeMarketDays": 0,
+          "coverageGapCount": 0,
+          "effectiveStart": "2026-09-03",
+          "evaluationPolicy": {
+            "familySize": 6,
+            "minimumClosedTradesForInterim": 10,
+            "minimumClosedTradesForManualReview": 30,
+            "minimumCompleteDaysForInterim": 10,
+            "minimumCompleteDaysForManualReview": 30,
+            "minimumResolutionRate": 0.8,
+            "walkForward": {
+              "embargoDays": 1,
+              "minimumFolds": 4,
+              "minimumTrainDays": 20,
+              "purgeDays": 1,
+              "testDays": 5
+            }
+          },
+          "ledgerEntryCount": 0,
+          "manualReviewReadyCount": 0,
+          "marketDate": "2026-09-02",
+          "primaryMetric": "terminal_equity_cny",
+          "sourceFailureCount": 0,
+          "status": "awaiting_start",
+          "tournamentId": "micro-parameter-tournament-v1",
+          "variants": [
+            {
+              "accountStatus": "active",
+              "afterCostPnl": 0.0,
+              "afterCostReturnPct": 0.0,
+              "cash": 2000.0,
+              "closedTrades": 0,
+              "expectedResolutions": 0,
+              "hasOpenPosition": false,
+              "interimDiagnosticsEligible": false,
+              "losses": 0,
+              "manualReviewEligible": false,
+              "maximumDrawdownPct": 0.0,
+              "profitFactor": null,
+              "resolutionRate": null,
+              "routeId": "breakout",
+              "terminalEquity": 2000.0,
+              "tier": "baseline",
+              "variantId": "breakout-baseline-v1",
+              "walkForward": {
+                "minimumFolds": 4,
+                "observableFolds": 0,
+                "status": "awaiting_history"
+              },
+              "wins": 0
+            },
+            {
+              "accountStatus": "active",
+              "afterCostPnl": 0.0,
+              "afterCostReturnPct": 0.0,
+              "cash": 2000.0,
+              "closedTrades": 0,
+              "expectedResolutions": 0,
+              "hasOpenPosition": false,
+              "interimDiagnosticsEligible": false,
+              "losses": 0,
+              "manualReviewEligible": false,
+              "maximumDrawdownPct": 0.0,
+              "profitFactor": null,
+              "resolutionRate": null,
+              "routeId": "breakout",
+              "terminalEquity": 2000.0,
+              "tier": "strict",
+              "variantId": "breakout-strict-v1",
+              "walkForward": {
+                "minimumFolds": 4,
+                "observableFolds": 0,
+                "status": "awaiting_history"
+              },
+              "wins": 0
+            },
+            {
+              "accountStatus": "active",
+              "afterCostPnl": 0.0,
+              "afterCostReturnPct": 0.0,
+              "cash": 2000.0,
+              "closedTrades": 0,
+              "expectedResolutions": 0,
+              "hasOpenPosition": false,
+              "interimDiagnosticsEligible": false,
+              "losses": 0,
+              "manualReviewEligible": false,
+              "maximumDrawdownPct": 0.0,
+              "profitFactor": null,
+              "resolutionRate": null,
+              "routeId": "relative_strength",
+              "terminalEquity": 2000.0,
+              "tier": "baseline",
+              "variantId": "relative-strength-baseline-v1",
+              "walkForward": {
+                "minimumFolds": 4,
+                "observableFolds": 0,
+                "status": "awaiting_history"
+              },
+              "wins": 0
+            },
+            {
+              "accountStatus": "active",
+              "afterCostPnl": 0.0,
+              "afterCostReturnPct": 0.0,
+              "cash": 2000.0,
+              "closedTrades": 0,
+              "expectedResolutions": 0,
+              "hasOpenPosition": false,
+              "interimDiagnosticsEligible": false,
+              "losses": 0,
+              "manualReviewEligible": false,
+              "maximumDrawdownPct": 0.0,
+              "profitFactor": null,
+              "resolutionRate": null,
+              "routeId": "relative_strength",
+              "terminalEquity": 2000.0,
+              "tier": "strict",
+              "variantId": "relative-strength-strict-v1",
+              "walkForward": {
+                "minimumFolds": 4,
+                "observableFolds": 0,
+                "status": "awaiting_history"
+              },
+              "wins": 0
+            },
+            {
+              "accountStatus": "active",
+              "afterCostPnl": 0.0,
+              "afterCostReturnPct": 0.0,
+              "cash": 2000.0,
+              "closedTrades": 0,
+              "expectedResolutions": 0,
+              "hasOpenPosition": false,
+              "interimDiagnosticsEligible": false,
+              "losses": 0,
+              "manualReviewEligible": false,
+              "maximumDrawdownPct": 0.0,
+              "profitFactor": null,
+              "resolutionRate": null,
+              "routeId": "mean_reversion",
+              "terminalEquity": 2000.0,
+              "tier": "baseline",
+              "variantId": "mean-reversion-baseline-v1",
+              "walkForward": {
+                "minimumFolds": 4,
+                "observableFolds": 0,
+                "status": "awaiting_history"
+              },
+              "wins": 0
+            },
+            {
+              "accountStatus": "active",
+              "afterCostPnl": 0.0,
+              "afterCostReturnPct": 0.0,
+              "cash": 2000.0,
+              "closedTrades": 0,
+              "expectedResolutions": 0,
+              "hasOpenPosition": false,
+              "interimDiagnosticsEligible": false,
+              "losses": 0,
+              "manualReviewEligible": false,
+              "maximumDrawdownPct": 0.0,
+              "profitFactor": null,
+              "resolutionRate": null,
+              "routeId": "mean_reversion",
+              "terminalEquity": 2000.0,
+              "tier": "strict",
+              "variantId": "mean-reversion-strict-v1",
+              "walkForward": {
+                "minimumFolds": 4,
+                "observableFolds": 0,
+                "status": "awaiting_history"
+              },
+              "wins": 0
+            }
+          ]
+        },
         "routeEvaluations": [
           {
             "kind": "recent_high_breakout",
@@ -322,7 +504,7 @@
     ]
   },
   "disclaimer": "仅展示本地模拟交易与历史研究结果，不连接实盘券商，不构成投资建议；历史回测和样本外验证不代表未来收益。",
-  "generatedAt": "2026-09-02T04:34:58+08:00",
+  "generatedAt": "2026-09-02T06:35:02+08:00",
   "marketDate": "2026-09-01",
   "schemaVersion": 1,
   "strategy": {
