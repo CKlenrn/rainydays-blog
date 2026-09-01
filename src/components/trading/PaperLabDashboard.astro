@@ -924,6 +924,8 @@ const formatValidationPeriod = (period: ValidationMetrics["period"]) => {
                     <div
                       data-netedge-strategy={account.entryPlan.netedgeShadow.strategyId}
                       data-netedge-status={account.entryPlan.netedgeShadow.status}
+                      data-netedge-effective-start={account.entryPlan.netedgeShadow.effectiveStartAt || ""}
+                      data-netedge-validation={account.entryPlan.netedgeShadow.validationStatus}
                       data-netedge-integrity={String(account.entryPlan.netedgeShadow.integrityVerified)}
                       data-netedge-automatic-execution={String(account.entryPlan.netedgeShadow.automaticExecution)}
                       data-netedge-automatic-promotion={String(account.entryPlan.netedgeShadow.automaticPromotion)}
