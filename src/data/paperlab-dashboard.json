@@ -112,11 +112,11 @@
         },
         "marketDate": "2026-09-01",
         "routeShadow": {
-          "effectiveStart": "2026-09-02",
-          "resolvedCount": 0,
-          "routeCount": 0,
-          "signalCount": 0,
-          "status": "awaiting_start"
+          "effectiveStart": null,
+          "resolvedCount": null,
+          "routeCount": null,
+          "signalCount": null,
+          "status": "unavailable"
         },
         "routes": [
           {
@@ -168,7 +168,7 @@
     ]
   },
   "disclaimer": "仅展示本地模拟交易与历史研究结果，不连接实盘券商，不构成投资建议；历史回测和样本外验证不代表未来收益。",
-  "generatedAt": "2026-09-01T20:45:10+08:00",
+  "generatedAt": "2026-09-01T23:28:52+08:00",
   "marketDate": "2026-09-01",
   "schemaVersion": 1,
   "strategy": {
