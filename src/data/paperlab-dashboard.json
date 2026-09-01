@@ -110,7 +110,7 @@
           "takeProfit": "entry_price * 1.040",
           "timeExit": "trading day 2 at 14:45:00"
         },
-        "marketDate": "2026-09-01",
+        "marketDate": "2026-09-02",
         "routeEvaluations": [
           {
             "kind": "recent_high_breakout",
@@ -134,7 +134,7 @@
         "routeEvidenceAvailable": false,
         "routeShadow": {
           "diagnosticOnly": true,
-          "effectiveStart": "2026-09-02",
+          "effectiveStart": "2026-09-03",
           "historySemantics": "recomputed_from_current_digest_verified_reports",
           "resolvedCount": 0,
           "routeCount": 0,
@@ -144,7 +144,7 @@
         "routeTournament": {
           "coverageGapCount": 0,
           "dataFailureCount": 0,
-          "effectiveStart": "2026-09-02",
+          "effectiveStart": "2026-09-03",
           "ledgerEntryCount": 0,
           "maximumMarketDays": 40,
           "observedMarketDays": 0,
@@ -202,7 +202,7 @@
             }
           ],
           "status": "awaiting_start",
-          "tournamentId": "micro-route-tournament-v2"
+          "tournamentId": "micro-route-tournament-v3"
         },
         "routes": [
           {
@@ -222,7 +222,7 @@
           }
         ],
         "status": "outside_entry_window",
-        "strategyVersion": "micro-opportunity-v3.1.0"
+        "strategyVersion": "micro-opportunity-v3.3.0"
       },
       "equity": 2000.0,
       "equityCurve": [],
@@ -231,6 +231,74 @@
       "id": "micro-2000",
       "label": "2,000 元短线模拟盘",
       "lastMarkDate": null,
+      "marketValue": 0,
+      "pendingOrderCount": 0,
+      "pendingOrders": [],
+      "positionCount": 0,
+      "positions": [],
+      "recentFills": [],
+      "totalReturn": 0.0
+    },
+    {
+      "capital": 2000.0,
+      "cash": 2000.0,
+      "drawdown": 0.0,
+      "entryPlan": {
+        "dataQuality": {
+          "executionReady": false,
+          "reason": "entry_window_closed"
+        },
+        "decision": {
+          "fillRecorded": false,
+          "orderCreated": false
+        },
+        "entryGate": {
+          "aboveVwap": true,
+          "benchmark": "510300",
+          "benchmarkMinimumChange": -2.5,
+          "maximumIopvPremium": 0.8,
+          "minimumHoldSeconds": 30,
+          "minimumTurnover": 20000000.0,
+          "triggerFormula": "deterministic mutually-exclusive completed-minute routes"
+        },
+        "executionWindow": {
+          "entryFrom": "09:45:00",
+          "expiresAt": "14:40:00",
+          "observeFrom": "09:45:00"
+        },
+        "exitPolicy": {
+          "riskExit": "same-session entry * (1 - 0.012)",
+          "sameDayExitAllowed": true,
+          "takeProfit": "same-session entry * (1 + 0.02)",
+          "timeExit": "same session at 14:50:00"
+        },
+        "marketDate": "2026-09-02",
+        "routeShadow": {
+          "diagnosticOnly": true,
+          "effectiveStart": null,
+          "historySemantics": null,
+          "resolvedCount": null,
+          "routeCount": null,
+          "signalCount": null,
+          "status": "unavailable"
+        },
+        "routes": [],
+        "status": "outside_entry_window",
+        "strategyVersion": "micro-t0-shadow-v1.0.0"
+      },
+      "equity": 2000.0,
+      "equityCurve": [
+        {
+          "date": "2026-09-02",
+          "drawdown": 0.0,
+          "equity": 2000.0
+        }
+      ],
+      "fillCount": 0,
+      "halted": false,
+      "id": "micro-t0-2000",
+      "label": "2,000 元 T+0 日内模拟盘",
+      "lastMarkDate": "2026-09-02",
       "marketValue": 0,
       "pendingOrderCount": 0,
       "pendingOrders": [],
@@ -254,7 +322,7 @@
     ]
   },
   "disclaimer": "仅展示本地模拟交易与历史研究结果，不连接实盘券商，不构成投资建议；历史回测和样本外验证不代表未来收益。",
-  "generatedAt": "2026-09-02T00:14:59+08:00",
+  "generatedAt": "2026-09-02T01:17:26+08:00",
   "marketDate": "2026-09-01",
   "schemaVersion": 1,
   "strategy": {
