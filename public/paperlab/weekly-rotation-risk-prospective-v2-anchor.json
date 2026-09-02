@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "documentType": "paperlab_research_registration_witness",
+  "programId": "weekly-rotation-risk-prospective-v2",
+  "mode": "research_shadow_only",
+  "registeredAt": "2026-09-02T10:47:46+08:00",
+  "effectiveStart": "2026-09-03",
+  "simulationRepositoryCommit": "c2e75eb3fad0ff784e09ec73f4fe7787a719bdbb",
+  "anchorFileSha256": "d82495098a68522b4a8dbe18df001cbbb171f7f4016c93593aabdc7469b4fc9d",
+  "canonicalAnchorSha256": "a970efc5e3a398ffa1879f7da6737cabb5f36c0088ba0ca715ea1f6d4024ce60",
+  "registrationSha256": "a93e919284e3aadf12c680b59a3faa8ef2bafa1d97b8e7cfef4acd9e53471662",
+  "emptyLedgerSha256": "9869104bde8617978f8f72630ce4886a3dc180e5e51919d5c5134106ab60c9f8",
+  "witnessScope": "registration_only",
+  "dailyLedgerWitnessed": false,
+  "automaticExecution": false,
+  "automaticSelection": false,
+  "automaticPromotion": false,
+  "note": "Public registration-hash witness. Daily local ledgers remain unwitnessed and non-promotable."
+}
