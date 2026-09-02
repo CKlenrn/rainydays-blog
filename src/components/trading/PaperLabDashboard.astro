@@ -576,7 +576,7 @@ const formatValidationPeriod = (period: ValidationMetrics["period"]) => {
       <p class="dashboard-status-line">
         <span class:list={["status-dot", data.dataStatus.isLive || data.dataStatus.status === "live" ? "is-live" : "is-close"]} aria-hidden="true"></span>
         <strong>{data.dataStatus.label}</strong>
-        <span>市场日 {data.marketDate}</span>
+        <span>最近完整收盘日 {data.marketDate}</span>
       </p>
     </div>
     <dl class="dashboard-meta">
@@ -1280,7 +1280,7 @@ const formatValidationPeriod = (period: ValidationMetrics["period"]) => {
     <div class="data-quality-detail">
       <dl>
         <div><dt>来源</dt><dd>{dataSource}</dd></div>
-        <div><dt>市场日</dt><dd>{data.marketDate}</dd></div>
+        <div><dt>最近完整收盘日</dt><dd>{data.marketDate}</dd></div>
         <div><dt>提示</dt><dd>{dataWarnings.length} 项</dd></div>
         <div><dt>Schema</dt><dd>v{data.schemaVersion}</dd></div>
       </dl>
