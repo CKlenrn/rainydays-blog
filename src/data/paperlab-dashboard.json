@@ -80,7 +80,7 @@
     {
       "capital": 2000.0,
       "cash": 147.5999999999999,
-      "drawdown": -0.0010000000000000009,
+      "drawdown": -0.006400000000000072,
       "entryPlan": {
         "dataQuality": {
           "executionReady": false,
@@ -300,24 +300,25 @@
             "quote": {
               "eligible": false,
               "failedGates": [
+                "weak_market_relative_strength",
                 "route_change_range",
+                "route_vwap_strength",
                 "route_score"
               ],
-              "symbol": "512660"
+              "symbol": "512800"
             },
             "routeId": "breakout"
           },
           {
             "kind": "relative_strength_continuation",
-            "minute": {
-              "eligible": true,
-              "reason": "relative_strength_continuation_confirmed",
-              "symbol": "512660"
-            },
+            "minute": null,
             "quote": {
-              "eligible": true,
-              "failedGates": [],
-              "symbol": "512660"
+              "eligible": false,
+              "failedGates": [
+                "weak_market_relative_strength",
+                "route_change_range"
+              ],
+              "symbol": "512800"
             },
             "routeId": "relative_strength"
           },
@@ -325,14 +326,17 @@
             "kind": "vwap_reclaim_reversal",
             "minute": null,
             "quote": {
-              "eligible": true,
-              "failedGates": [],
-              "symbol": "512100"
+              "eligible": false,
+              "failedGates": [
+                "weak_market_relative_strength",
+                "route_change_range"
+              ],
+              "symbol": "512800"
             },
             "routeId": "mean_reversion"
           }
         ],
-        "routeEvidenceAt": "2026-09-02T09:56:59+08:00",
+        "routeEvidenceAt": "2026-09-02T10:06:00+08:00",
         "routeEvidenceAvailable": true,
         "routeShadow": {
           "diagnosticOnly": true,
@@ -426,12 +430,12 @@
         "status": "position_monitoring",
         "strategyVersion": "micro-opportunity-v3.5.0"
       },
-      "equity": 1998.0,
+      "equity": 1987.1999999999998,
       "equityCurve": [
         {
           "date": "2026-09-02",
           "drawdown": 0.0,
-          "equity": 1998.0
+          "equity": 1987.1999999999998
         }
       ],
       "fillCount": 1,
@@ -439,20 +443,20 @@
       "id": "micro-2000",
       "label": "2,000 元短线模拟盘",
       "lastMarkDate": "2026-09-02",
-      "marketValue": 1850.4,
+      "marketValue": 1839.6,
       "pendingOrderCount": 0,
       "pendingOrders": [],
       "positionCount": 1,
       "positions": [
         {
           "averageCost": 3.0873333333333335,
-          "lastPrice": 3.084,
-          "marketValue": 1850.4,
+          "lastPrice": 3.066,
+          "marketValue": 1839.6,
           "name": "中证1000ETF",
           "quantity": 600,
           "symbol": "512100",
-          "unrealizedPnl": -2.000000000000046,
-          "weight": 0.9261261261261262
+          "unrealizedPnl": -12.800000000000189,
+          "weight": 0.9257246376811594
         }
       ],
       "recentFills": [
@@ -467,7 +471,7 @@
           "time": "2026-09-02T09:52:45+08:00"
         }
       ],
-      "totalReturn": -0.0010000000000000009
+      "totalReturn": -0.006400000000000072
     },
     {
       "capital": 2000.0,
@@ -509,7 +513,7 @@
           "effectiveStartAt": "2026-09-02T09:45:00+08:00",
           "forcedExitAt": "14:50:00",
           "integrityVerified": true,
-          "latestCheckpoint": "2026-09-02T09:57+08:00",
+          "latestCheckpoint": "2026-09-02T10:08+08:00",
           "latestResolutionNetPnl": null,
           "latestSignal": null,
           "ledgerEntryCount": 0,
@@ -573,7 +577,7 @@
     ]
   },
   "disclaimer": "仅展示本地模拟交易与历史研究结果，不连接实盘券商，不构成投资建议；历史回测和样本外验证不代表未来收益。",
-  "generatedAt": "2026-09-02T10:01:38+08:00",
+  "generatedAt": "2026-09-02T10:08:33+08:00",
   "marketDate": "2026-09-01",
   "schemaVersion": 1,
   "strategy": {
